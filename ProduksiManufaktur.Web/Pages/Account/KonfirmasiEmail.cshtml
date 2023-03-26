@@ -1,0 +1,11 @@
+﻿@page
+@model ProduksiManufaktur.Web.Pages.Account.KonfirmasiEmailModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewBag.Title = "Konfirmasi Id";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <p>@Html.Raw(TempData["Pesan"])</p>
+</div>

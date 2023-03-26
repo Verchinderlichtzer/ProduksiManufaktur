@@ -1,0 +1,16 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager To
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<div style="height: 100vh; width: 100%;">
+    <div style="position: absolute; top: calc(50% - 250px); left: calc(50% - 200px);">
+        @Body
+    </div>
+</div>
+
+@code {
+
+}

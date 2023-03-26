@@ -1,0 +1,148 @@
+﻿@page "/penjualan/form"
+@page "/penjualan/form/{id}"
+@inherits PenjualanFormBase
+
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudPaper Elevation="0" Class="mt-3 pa-4">
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@icon" Class="mr-3 mb-n1" />
+            @judul
+        </MudText>
+
+        <MudForm Model="penjualan" @ref="form" Validation="@(validator.ValidateValue)">
+            <MudStack Row="true">
+                <div class="flex-5">
+                    <MudStack Row="true" Class="w-250">
+                        <div class="flex-5">
+                            <MudDatePicker PickerVariant="PickerVariant.Dialog" Date="penjualan.InputTanggal" DateChanged="@(e => {penjualan.InputTanggal = e; penjualan.JatuhTempo = e?.AddDays(1);})" Label="Tanggal" DateFormat="dd/MM/yyyy" Disabled="!baru" />
+                        </div>
+                        <div class="flex-3">
+                            <MudTimePicker PickerVariant="PickerVariant.Dialog" @bind-Time="penjualan.InputWaktu" Label="Waktu" Disabled="!baru" />
+                        </div>
+                    </MudStack>
+                    <div class="wp-50">
+                        <MudAutocomplete T="Customer" OnlyValidateIfDirty="true" Dense="true" Immediate="true" For="(() => penjualan.Customer)" Label="Customer" CoerceText="true" Value="penjualan.Customer" ValueChanged="@(e => {penjualan.Customer = e; penjualan.CustomerId = e.Id;})" SearchFunc="@(async e => await CariCustomer(e))" ToStringFunc="@(x => x is null ? null : x.Nama)" MaxItems="80" />
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <MudTextField T="string" Label="Metode Bayar" ReadOnly="true" tabindex="-1" Value="penjualan.MetodeBayar" />
+                    <MudTextField T="string" Label="Status" ReadOnly="true" tabindex="-1" Value="penjualan.Status" />
+                </div>
+            </MudStack>
+        </MudForm>
+        <MudDataGrid Items="penjualan.PenjualanDetail" Elevation="2" Class="my-3" Dense="true" Bordered="true" ShowColumnOptions="false">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Barang yang dijual</MudText>
+                <MudSpacer />
+                <MudAutocomplete Class="mt-n3" T="BarangSatuan" @ref="inputBarangSatuan" Dense="true" Placeholder="Cari barang..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" CoerceText="true" SearchFunc="@(async e => await CariBarangSatuan(e))" ValueChanged="@(e => PilihBarangSatuan(e))" ToStringFunc="@(x => x is null ? null : string.IsNullOrEmpty(x.Ukuran) ? $"{x.Barang!.Nama} ({x.Nama})" : $"{x.Barang!.Nama} ({x.Nama} — {x.Ukuran})")" MaxItems="80" />
+            </ToolBarContent>
+            <Columns>
+                <Column T="PenjualanDetail" Field="BarangSatuan" Title="Nama Barang" SortBy="@(e => e.BarangSatuan!.Nama)">
+                    <CellTemplate>
+                        @context.Item.BarangSatuan!.Barang!.Nama
+                    </CellTemplate>
+                </Column>
+                <Column T="PenjualanDetail" Field="Harga" Title="Harga Jual" HeaderStyle="width:1px">
+                    <CellTemplate>
+                        <MudNumericField T="int" Class="mt-n1" Immediate="true" Value="context.Item.Harga" ValueChanged="@(e => {context.Item.Harga = e; Hitung();})" Min="1" Max="1000000000" HideSpinButtons="true" Format="n0" tabindex="-1" />
+                    </CellTemplate>
+                </Column>
+                <Column T="PenjualanDetail" Field="BarangSatuan" Title="Stok Awal" HeaderStyle="width:1px" SortBy="@(e => e.BarangSatuan!.Barang!.Stok)" CellStyle="text-align:center">
+                    <CellTemplate>
+                        @context.Item.BarangSatuan!.Barang!.Stok.ToString("g0") @context.Item.BarangSatuan!.Barang!.SatuanProduksi
+                    </CellTemplate>
+                </Column>
+                <Column T="PenjualanDetail" Field="Jumlah" HeaderStyle="width:200px">
+                    <CellTemplate>
+                        <MudNumericField T="decimal" Class="mt-n1" Immediate="true" Value="context.Item.Jumlah" Adornment="Adornment.End" AdornmentText="@(string.IsNullOrEmpty(context.Item.BarangSatuan!.Ukuran) ? context.Item.BarangSatuan!.Nama : $"{context.Item.BarangSatuan!.Nama} ({context.Item.BarangSatuan!.Ukuran})")" ValueChanged="@(e => {context.Item.Jumlah = decimal.Round(e, 2); Hitung();})" Min="@(context.Item.MinJumlah == 0 ? 0.01m : context.Item.MinJumlah)" Max="@(Math.Floor(context.Item.BarangSatuan!.Barang!.Stok / context.Item.BarangSatuan!.KonversiStok))" HideSpinButtons="true" Format="g0" />
+                    </CellTemplate>
+                </Column>
+                <Column T="PenjualanDetail" Field="StokAkhir" Title="Stok Akhir" HeaderStyle="width:1px" CellStyle="text-align:center">
+                    <CellTemplate>
+                        @context.Item.StokAkhir.ToString("g0") @context.Item.BarangSatuan!.Barang!.SatuanProduksi
+                    </CellTemplate>
+                </Column>
+                <Column T="PenjualanDetail" Field="Total" HeaderStyle="width:1px" CellStyle="text-align:right">
+                    <CellTemplate>
+                        @context.Item.Total.ToString("n0")
+                    </CellTemplate>
+                </Column>
+                <Column T="PenjualanDetail" HeaderStyle="width:1px" Sortable="false">
+                    <CellTemplate>
+                        <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(async e => await DeleteDetail(context.Item))" tabindex="-1" />
+                    </CellTemplate>
+                </Column>
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="PenjualanDetail" RowsPerPageString="Jumlah baris per halaman" InfoFormat="Menampilkan {first_item} - {last_item} dari {all_items} barang" />
+            </PagerContent>
+        </MudDataGrid>
+        <MudStack Row="true">
+            <div class="flex-1">
+                <MudNumericField Label="Subtotal" Adornment="Adornment.Start" AdornmentText="Rp" ReadOnly="true" tabindex="-1" Value="@penjualan.Subtotal" HideSpinButtons="true" Format="n0" />
+                <div class="wp-30">
+                    <MudNumericField T="int" Label="PPN" Adornment="Adornment.End" AdornmentText="%" Immediate="true" Value="penjualan.PPN" ValueChanged="@(e => {penjualan.PPN = e; Hitung();})" HideSpinButtons="true" Min="0" Max="100" Format="g0" />
+                </div>
+                <MudNumericField Label="Grand Total" Adornment="Adornment.Start" AdornmentText="Rp" ReadOnly="true" tabindex="-1" Value="penjualan.GrandTotal" HideSpinButtons="true" Format="n0" />
+            </div>
+            <div class="flex-1">
+                @if (!baru)
+                {
+                    <MudNumericField Label="Terbayar" Adornment="Adornment.Start" AdornmentText="Rp" ReadOnly="true" tabindex="-1" Value="@penjualan.Terbayar" HideSpinButtons="true" Format="n0" />
+                }
+                else
+                {
+                    <MudNumericField T="int" Label="Uang Muka" Adornment="Adornment.Start" AdornmentText="Rp" Immediate="true" Value="transaksiPenjualan.Nominal" ValueChanged="@(e => {transaksiPenjualan.Nominal = e; Hitung();})" HideSpinButtons="true" Min="0" Max="1000000000" Format="n0" />
+                }
+                <MudNumericField Label="@transaksiPenjualan.BalanceLabel" Adornment="Adornment.Start" AdornmentText="Rp" ReadOnly="true" tabindex="-1" Value="@transaksiPenjualan.Balance" HideSpinButtons="true" Format="n0" />
+            </div>
+            <div class="flex-4">
+                <MudTextField T="string" MaxLength="200" Label="Keterangan" @bind-Value="penjualan.Keterangan" />
+                @if (penjualan.MetodeBayar == "Kredit")
+                {
+                    <MudStack Row="true" Class="wp-35">
+                        <div class="flex-5">
+                            <MudDatePicker PickerVariant="PickerVariant.Dialog" Date="penjualan.JatuhTempo" MinDate="@(penjualan.InputTanggal?.AddDays(1))" MaxDate="@(penjualan.InputTanggal?.AddDays(1000))" DateChanged="@(e => HitungJatuhTempo(e))" Label="Jatuh Tempo" DateFormat="dd/MM/yyyy" />
+                        </div>
+                        <div class="flex-3">
+                            <MudNumericField T="int" Adornment="Adornment.End" AdornmentText="Hari" Immediate="true" Value="penjualan.HariJatuhTempo" ValueChanged="@(e => {penjualan.HariJatuhTempo = e; penjualan.JatuhTempo = penjualan.InputTanggal?.AddDays(penjualan.HariJatuhTempo);})" HideSpinButtons="true" Min="1" Max="1000" Format="g0" />
+                        </div>
+                    </MudStack>
+                }
+            </div>
+        </MudStack>
+        <MudStack Row="true" Class="mt-4">
+            <div>
+                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Help" @onmouseenter="@(() => popupTerbuka = true)" @onmouseleave="@(() => popupTerbuka = false)" />
+                <MudPopover Open="@popupTerbuka" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.BottomLeft" Fixed="true" Class="px-4">
+                    <MudStack Spacing="0" Class="pb-2">
+                        <MudText Typo="Typo.button" Class="pt-2">Customer :</MudText>
+                        <div>▪ Tidak boleh kosong</div>
+                        <MudText Typo="Typo.button" Class="pt-2">Barang :</MudText>
+                        <div>▪ Jumlah barang tidak boleh kurang dari yang sudah diretur</div>
+                        <div>▪ Barang yang sudah diretur tidak bisa dihapus</div>
+                    </MudStack>
+                </MudPopover>
+            </div>
+            @if (result is null)
+            {
+                <MudText Typo="Typo.caption" Color="Color.Error" @onclick="@(async e => await Refresh())" Style="cursor: pointer;">@pesan</MudText>
+            }
+            <MudSpacer />
+            <MudStack Row="true" Spacing="2">
+                <MudButton Variant="Variant.Filled" Size="Size.Small" Color="@warna" OnClick="(async () => await Save())" Disabled="@(result is null || !penjualan.PenjualanDetail!.Any())">Simpan</MudButton>
+                <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Dark" OnClick="@(e => To.NavigateTo("/penjualan"))">Batal</MudButton>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
+
+    @if (baru && (penjualan.Customer is not null || transaksiPenjualan.Nominal > 0 || penjualan.PenjualanDetail!.Any()))
+    {
+        <NavigationLock ConfirmExternalNavigation="true" />
+    }
+}

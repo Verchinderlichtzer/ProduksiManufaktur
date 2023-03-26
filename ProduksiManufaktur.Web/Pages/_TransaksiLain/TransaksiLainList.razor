@@ -1,0 +1,74 @@
+﻿@page "/transaksi-lain"
+@inherits TransaksiLainListBase
+
+<PageTitle>Transaksi Lain - Produksi Manufaktur</PageTitle>
+@if (listTransaksiLain is null)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudDataGrid Items="listTransaksiLain" Elevation="2" Dense="true" Bordered="true" QuickFilter="FilterSearch" ShowColumnOptions="false">
+        <ToolBarContent>
+            <MudStack Row="true" Spacing="2">
+                <MudText Typo="Typo.h5">Daftar Transaksi Lain</MudText>
+                <AuthorizeView Policy="ProdukWrite">
+                    <Authorized Context="konteks">
+                        <MudTooltip Text="Tambah Transaksi" Arrow="true" Placement="Placement.Bottom">
+                            <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Add" Color="Color.Success" OnClick="@(async e => await Form())" />
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+            <MudSpacer />
+            <MudTextField Immediate="true" @bind-Value="dicari" Placeholder="Cari transaksi..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        </ToolBarContent>
+        <Columns>
+            <Column T="TransaksiLain" Field="Id" HeaderStyle="width:1px" />
+            <Column T="TransaksiLain" Field="Tanggal" HeaderStyle="width:145px" CellStyle="text-align:center">
+                <CellTemplate>
+                    @context.Item.Tanggal.ToString("dd/MM/yyyy HH.mm")
+                </CellTemplate>
+            </Column>
+            <Column T="TransaksiLain" Field="Jenis" HeaderStyle="width:1px" CellStyle="text-align:center">
+                <CellTemplate>
+                    <MudText Color="@(context.Item.Jenis == "Pendapatan" ? Color.Success : Color.Error)">
+                        @context.Item.Jenis
+                    </MudText>
+                </CellTemplate>
+            </Column>
+            <Column T="TransaksiLain" Field="Kategori" HeaderStyle="width:240px" CellStyle="text-align:center" />
+            <Column T="TransaksiLain" Field="Nominal" HeaderStyle="width:1px" CellStyle="text-align:right">
+                <CellTemplate>
+                    @context.Item.Nominal.ToString("n0")
+                </CellTemplate>
+            </Column>
+            <Column T="TransaksiLain" Field="Keterangan" HeaderStyle="width:240px" />
+            <Column T="TransaksiLain" HeaderStyle="width:1px" Sortable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1">
+                        <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" OnClick="@(e => Form(context.Item))" />
+                        <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(e => Hapus(context.Item))" />
+                    </MudStack>
+                </CellTemplate>
+            </Column>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="TransaksiLain" RowsPerPageString="Jumlah baris per halaman" InfoFormat="Menampilkan {first_item} - {last_item} dari {all_items} transaksi" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+<MudMessageBox @ref="deleteDialog" Title="Konfirmasi Hapus">
+    <MessageContent>
+        <MudPaper Elevation="0" MinWidth="300px" Class="mx-5">
+            @pesanHapus
+        </MudPaper>
+    </MessageContent>
+    <NoButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Error" Size="Size.Small">Ya</MudButton>
+    </NoButton>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Dark" Size="Size.Small">Tidak</MudButton>
+    </YesButton>
+</MudMessageBox>

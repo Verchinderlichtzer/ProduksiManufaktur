@@ -1,0 +1,35 @@
+﻿@page "/pekerjaan/info/{id:int}"
+@inherits PekerjaanInfoBase
+
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <PageTitle>Pekerjaan @pekerjaan.Nama - Produksi Manufaktur</PageTitle>
+    @if (pekerjaan.Karyawan!.Any())
+    {
+        <MudDataGrid Class="mt-3" Items="pekerjaan.Karyawan" Elevation="2" Dense="true" Bordered="true" ShowColumnOptions="false">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Karyawan yang bekerja sebagai @pekerjaan.Nama</MudText>
+            </ToolBarContent>
+            <Columns>
+                <Column T="Karyawan" Field="Id" Title="ID" HeaderStyle="width:1px" />
+                <Column T="Karyawan" Field="Nama" />
+                <Column T="Karyawan" Field="Telepon" HeaderStyle="width:150px" />
+                <Column T="Karyawan" Field="Email" HeaderStyle="width:200px" />
+                <Column T="Karyawan" Field="Upah" HeaderStyle="width:120px" CellStyle="text-align:right">
+                    <CellTemplate>
+                        @context.Item.Upah.ToString("n0")
+                    </CellTemplate>
+                </Column>
+            </Columns>
+        </MudDataGrid>
+    }
+    else
+    {
+        <MudText Typo="Typo.button" Color="Color.Error">Tidak ada karyawan yang bekerja sebagai @pekerjaan.Nama</MudText>
+    }
+    
+}

@@ -1,0 +1,78 @@
+﻿@page "/bahan"
+@inherits BahanListBase
+
+<PageTitle>Bahan - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudDataGrid Items="listBahan" Elevation="2" Dense="true" Bordered="true" QuickFilter="FilterSearch" ShowColumnOptions="false">
+        <ToolBarContent>
+            <MudStack Row="true" Spacing="2">
+                <MudText Typo="Typo.h5">Daftar Bahan</MudText>
+                <AuthorizeView Policy="ProdukWrite">
+                    <Authorized Context="konteks">
+                        <MudTooltip Text="Tambah Bahan" Arrow="true" Placement="Placement.Bottom">
+                            <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Add" Color="Color.Success" OnClick="@(async e => await Form())" />
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
+                <AuthorizeView Policy="ProdukRead">
+                    <Authorized Context="konteks">
+                        <MudTooltip Text="Perubahan Stok Bahan" Arrow="true" Placement="Placement.Bottom">
+                            <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Workspaces" Color="Color.Secondary" OnClick="@(e => To.NavigateTo("/bahan/perubahan-stok-bahan"))" />
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+            <MudSpacer />
+            <MudTextField Immediate="true" @bind-Value="dicari" Placeholder="Cari bahan..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        </ToolBarContent>
+        <Columns>
+            <Column T="Bahan" Field="Id" Title="ID" HeaderStyle="width:1px" />
+            <Column T="Bahan" Field="Nama" />
+            <Column T="Bahan" Field="StokMinimal" Title="Stok Minimal" HeaderStyle="width:1px" CellStyle="text-align:center">
+                <CellTemplate>
+                    @context.Item.StokMinimal.ToString("g0")
+                </CellTemplate>
+            </Column>
+            <Column T="Bahan" Field="Stok" HeaderStyle="width:1px" CellStyle="text-align:center">
+                <CellTemplate>
+                    @context.Item.Stok.ToString("g0")
+                </CellTemplate>
+            </Column>
+            <Column T="Bahan" Field="SatuanProduksi" Title="Satuan Produksi" HeaderStyle="width:1px" CellStyle="text-align:center" />
+            <AuthorizeView Policy="ProdukWrite">
+                <Authorized Context="konteks">
+                    <Column T="Bahan" HeaderStyle="width:1px" Sortable="false">
+                        <CellTemplate>
+                            <MudStack Row="true" Spacing="1">
+                                <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" OnClick="@(async e => await Form(context.Item))" />
+                                <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(async e => await Hapus(context.Item))" />
+                            </MudStack>
+                        </CellTemplate>
+                    </Column>
+                </Authorized>
+            </AuthorizeView>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Bahan" RowsPerPageString="Jumlah baris per halaman" InfoFormat="Menampilkan {first_item} - {last_item} dari {all_items} bahan" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+<MudMessageBox @ref="deleteDialog" Title="Konfirmasi Hapus">
+    <MessageContent>
+        <MudPaper Elevation="0" MinWidth="300px" Class="mx-5">
+            @pesanHapus
+        </MudPaper>
+    </MessageContent>
+    <NoButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Error" Size="Size.Small">Ya</MudButton>
+    </NoButton>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Dark" Size="Size.Small">Tidak</MudButton>
+    </YesButton>
+</MudMessageBox>

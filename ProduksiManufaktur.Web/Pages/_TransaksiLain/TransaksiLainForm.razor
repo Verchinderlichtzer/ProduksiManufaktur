@@ -1,0 +1,84 @@
+﻿@inherits TransaksiLainFormBase
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@icon" Class="mr-3 mb-n1" />
+            @judul
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudContainer Class="h-375">
+            <MudStack>
+                @foreach (var item in ListTransaksiLain)
+                {
+                    <MudPaper Class="@(Baru ? classCreate : string.Empty)" Elevation="0">
+                        <MudForm Model="item" @ref="form" Validation="@(validator.ValidateValue)">
+                            <MudStack Row="true" Class="w-250">
+                                <div class="flex-5">
+                                    <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="item.InputTanggal" Label="Tanggal" DateFormat="dd/MM/yyyy" />
+                                </div>
+                                <div class="flex-3">
+                                    <MudTimePicker PickerVariant="PickerVariant.Dialog" @bind-Time="item.InputWaktu" Label="Waktu" />
+                                </div>
+                            </MudStack>
+                            <div class="pt-4">
+                                <MudText Typo="Typo.caption">Jenis Transaksi :</MudText>
+                                <MudRadioGroup T="string" Class="ml-1" For="(() => item.Jenis)" @bind-SelectedOption="item.Jenis">
+                                    <MudRadio Color="Color.Error" Dense="true" UnCheckedColor="Color.Default" Option="@("Pengeluaran")">Pengeluaran</MudRadio>
+                                    <MudRadio Color="Color.Success" Dense="true" UnCheckedColor="Color.Default" Option="@("Pendapatan")">Pendapatan</MudRadio>
+                                </MudRadioGroup>
+                            </div>
+                            <MudStack Row="true">
+                                <div class="flex-2">
+                                    <MudTextField T="string" For="(() => item.Kategori)" MaxLength="30" Label="Kategori" @bind-Value="item.Kategori" />
+                                </div>
+                                <div class="flex-1">
+                                    <MudNumericField T="int" For="(() => item.Nominal)" Label="Nominal" @bind-Value="item.Nominal" Max="1000000000" HideSpinButtons="true" Format="n0" Adornment="Adornment.Start" AdornmentText="Rp" />
+                                </div>
+                            </MudStack>
+                            <MudTextField T="string" For="(() => item.Keterangan)" MaxLength="200" Label="Keterangan" @bind-Value="item.Keterangan" />
+                        </MudForm>
+                    </MudPaper>
+                }
+                @if (Baru)
+                {
+                    <MudPaper Class="border-dashed border-2 mud-border-success pa-4 mb-6 text-center" Style="cursor: pointer;" @onclick="@(() => ListTransaksiLain.Add(new()))" Elevation="0">
+                        <MudIcon Icon="@Icons.Material.Filled.Add" Style="font-size: 6rem; text-align: center;" Color="Color.Success" />
+                    </MudPaper>
+                }
+            </MudStack>
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <div>
+            <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Help" @onmouseenter="@(() => popupTerbuka = true)" @onmouseleave="@(() => popupTerbuka = false)" />
+            <MudPopover Open="@popupTerbuka" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.BottomLeft" Fixed="true" Class="px-4">
+                <MudStack Spacing="0" Class="pb-2">
+                    <MudText Typo="Typo.button" Class="pt-2">Jenis :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                    <MudText Typo="Typo.button" Class="pt-2">Kategori :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                    <MudText Typo="Typo.button" Class="pt-2">Nominal :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                    <MudText Typo="Typo.button" Class="pt-2">Keterangan :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                </MudStack>
+            </MudPopover>
+        </div>
+        @if (result is null)
+        {
+            <MudText Typo="Typo.caption" Color="Color.Error" Style="cursor: pointer;">Terjadi kesalahan saat menyimpan data, harap periksa kembali dan refresh form.</MudText>
+        }
+        <MudSpacer />
+        <MudStack Row="true" Spacing="2">
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="@warna" OnClick="(async () => await Save())" Disabled="@(result is null)">Simpan</MudButton>
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Dark" OnClick="@(e => Cancel())">Batal</MudButton>
+        </MudStack>
+    </DialogActions>
+</MudDialog>
+
+@if (ListTransaksiLain.Any(x => !string.IsNullOrEmpty(x.Jenis) || !string.IsNullOrEmpty(x.Kategori) || !string.IsNullOrEmpty(x.Keterangan) || x.Nominal > 0))
+{
+    <NavigationLock ConfirmExternalNavigation="true" />
+}

@@ -1,0 +1,94 @@
+﻿@inherits BarangFormBase
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@icon" Class="mr-3 mb-n1" />
+            @judul
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudContainer Class="h-375">
+            <MudForm Model="Barang" @ref="form" Validation="@(validator.ValidateValue)">
+                <MudTextField T="string" OnlyValidateIfDirty="true" MaxLength="50" Immediate="true" For="(() => Barang.Nama)" Label="Nama Barang" @bind-Value="Barang.Nama" AutoFocus="true" />
+                <MudStack Row="true">
+                    <div class="flex-2">
+                        <MudTextField T="string" OnlyValidateIfDirty="true" MaxLength="10" Immediate="true" For="(() => Barang.SatuanProduksi)" Label="Satuan" Value="Barang.SatuanProduksi" ValueChanged="@(e => Barang.SatuanProduksi = e.ToLower())" />
+                    </div>
+                    <div class="flex-1">
+                        <MudNumericField T="decimal" Value="Barang.StokMinimal" ValueChanged="@(e => Barang.StokMinimal = decimal.Round(e, 2))" Label="Stok Minimal" Min="0" Max="1000000" Adornment="Adornment.End" AdornmentText="@Barang.SatuanProduksi" HideSpinButtons="true" Format="g0" />
+                    </div>
+                    @if (Baru)
+                    {
+                        <div class="flex-1">
+                            <MudNumericField T="decimal" Value="Barang.StokAwal" ValueChanged="@(e => Barang.StokAwal = decimal.Round(e, 2))" Label="Stok Saat Ini" Min="0" Max="9999999" Adornment="Adornment.End" AdornmentText="@Barang.SatuanProduksi" HideSpinButtons="true" Format="g0" />
+                        </div>
+                    }
+                </MudStack>
+            </MudForm>
+            <MudTable Elevation="0" Items="@Barang.BarangSatuan" Bordered="true" Dense="true">
+                <ToolBarContent>
+                    <MudStack Row="true" Spacing="2">
+                        <MudText Typo="Typo.h6">Satuan Penjualan</MudText>
+                        <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Add" Color="Color.Success" OnClick="@(e => Barang.BarangSatuan!.Add(new BarangSatuan { BarangId = Barang.Id }))" />
+                    </MudStack>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh Style="text-align:center" Class="w-25">Nama Satuan</MudTh>
+                    <MudTh Style="text-align:center">Ukuran</MudTh>
+                    <MudTh Style="text-align:center; width:130px">Jual</MudTh>
+                    <MudTh Style="text-align:center; width:140px">Konversi Stok</MudTh>
+                    <MudTh Style="text-align:center" Class="w-25" />
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>
+                        <MudTextField T="string" Class="mt-n5" MaxLength="10" Value="context.Nama" ValueChanged="@(e => context.Nama = e.ToLower())" />
+                    </MudTd>
+                    <MudTd Style="text-align:center">
+                        <MudTextField T="string" Class="mt-n5" MaxLength="14" Value="context.Ukuran" ValueChanged="@(e => context.Ukuran = e.ToLower())" />
+                    </MudTd>
+                    <MudTd>
+                        <MudNumericField Class="mt-n5" @bind-Value="context.Harga" Adornment="Adornment.Start" AdornmentText="Rp" Min="0" Max="1000000000" HideSpinButtons="true" Format="n0" />
+                    </MudTd>
+                    <MudTd>
+                        <MudNumericField Class="mt-n5" T="decimal" Value="context.KonversiStok" ValueChanged="@(e => context.KonversiStok = decimal.Round(e, 2))" Adornment="Adornment.End" AdornmentText="@Barang.SatuanProduksi" Min="0.01m" Max="9999999" HideSpinButtons="true" Format="g0" />
+                    </MudTd>
+                    <MudTd>
+                        <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(e => DeleteBarangSatuan(context))" tabindex="-1" />
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <div>
+            <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Help" @onmouseenter="@(() => popupTerbuka = true)" @onmouseleave="@(() => popupTerbuka = false)" />
+            <MudPopover Open="@popupTerbuka" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.BottomLeft" Fixed="true" Class="px-4">
+                <MudStack Spacing="0" Class="pb-2">
+                    <MudText Typo="Typo.button" Class="pt-2">Nama :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                    <MudText Typo="Typo.button" Class="pt-2">Satuan :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                    <MudText Typo="Typo.button" Class="pt-2">Stok :</MudText>
+                    <div>▪ Tidak boleh melebihi 10Jt</div>
+                    <MudText Typo="Typo.button" Class="pt-2">Satuan Penjualan :</MudText>
+                    <div>▪ Setidaknya memiliki 1 satuan</div>
+                </MudStack>
+            </MudPopover>
+        </div>
+        @if (result is null)
+        {
+            <MudText Typo="Typo.caption" Color="Color.Error" @onclick="@(async e => await Refresh())" Style="cursor: pointer;">Terjadi kesalahan saat menyimpan data, harap periksa kembali dan refresh form.</MudText>
+        }
+        <MudSpacer />
+        <MudStack Row="true" Spacing="2">
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="@warna" OnClick="(async () => await Save())" Disabled="@(result is null)">Simpan</MudButton>
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Dark" OnClick="@(e => Cancel())">Batal</MudButton>
+        </MudStack>
+    </DialogActions>
+</MudDialog>
+
+@if (!string.IsNullOrEmpty(Barang.Nama) || !string.IsNullOrEmpty(Barang.SatuanProduksi) || Barang.BarangSatuan!.Any() || Barang.StokMinimal > 0 || Barang.StokAwal > 0)
+{
+    <NavigationLock ConfirmExternalNavigation="true" />
+}

@@ -1,0 +1,73 @@
+﻿@page "/pembelian/retur/info/{id}"
+@inherits ReturPembelianInfoBase
+
+<PageTitle>Info @Id - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudText Typo="Typo.h6">@judul</MudText>
+    <MudStack Spacing="1">
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">ID Pembelian</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @returPembelian.PembelianId</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Tanggal</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @returPembelian.Tanggal.ToString("dd/MM/yyyy hh.mm tt")</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">GrandTotal</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @returPembelian.GrandTotal.ToString("c0")</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Keterangan</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @returPembelian.Keterangan</MudText>
+            </div>
+        </MudStack>
+        <MudDataGrid Class="mt-3" Items="returPembelian.ReturPembelianDetail" Elevation="2" Dense="true" Bordered="true" ShowColumnOptions="false">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Bahan yang dikembalikan</MudText>
+            </ToolBarContent>
+            <Columns>
+                <Column T="ReturPembelianDetail" Field="BahanSatuan" Title="Nama Bahan">
+                    <CellTemplate>
+                        @context.Item.BahanSatuan!.Bahan!.Nama
+                    </CellTemplate>
+                </Column>
+                <Column T="ReturPembelianDetail" Field="Harga" HeaderStyle="width:125px" CellStyle="text-align:right">
+                    <CellTemplate>
+                        @context.Item.Harga.ToString("n0")
+                    </CellTemplate>
+                </Column>
+                <Column T="ReturPembelianDetail" Field="Jumlah" HeaderStyle="width:200px" CellStyle="text-align:center">
+                    <CellTemplate>
+                        @context.Item.Jumlah.ToString("g0") @(string.IsNullOrEmpty(context.Item.BahanSatuan!.Ukuran) ? context.Item.BahanSatuan!.Nama : $"{context.Item.BahanSatuan!.Nama} ({context.Item.BahanSatuan!.Ukuran})")
+                    </CellTemplate>
+                </Column>
+                <Column T="ReturPembelianDetail" Field="Total" HeaderStyle="width:125px" CellStyle="text-align:right">
+                    <CellTemplate>
+                        @context.Item.Total.ToString("n0")
+                    </CellTemplate>
+                </Column>
+            </Columns>
+        </MudDataGrid>
+    </MudStack>
+}

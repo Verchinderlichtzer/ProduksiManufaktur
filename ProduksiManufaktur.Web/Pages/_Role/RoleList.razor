@@ -1,0 +1,91 @@
+﻿@page "/role"
+@inherits RoleListBase
+
+<PageTitle>Role - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudDataGrid Items="listRole" Elevation="2" Dense="true" Bordered="true" QuickFilter="FilterSearch" ShowColumnOptions="false">
+        <ToolBarContent>
+            <MudStack Row="true" Spacing="2">
+                <MudText Typo="Typo.h5">Daftar Role</MudText>
+                <AuthorizeView Policy="AkunWrite">
+                    <Authorized Context="konteks">
+                        <MudTooltip Text="Tambah Role" Arrow="true" Placement="Placement.Bottom">
+                            <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Add" Color="Color.Success" OnClick="@(async e => await Form())" />
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+            <MudSpacer />
+            <MudTextField Immediate="true" @bind-Value="dicari" Placeholder="Cari role..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        </ToolBarContent>
+        <Columns>
+            <HierarchyColumn T="Role" IconSize="Size.Small" />
+            <Column T="Role" Field="Name" />
+            <Column T="Role" Field="ClaimNoAccess" Title="No Access" HeaderStyle="width:1px" CellStyle="text-align:center" />
+            <Column T="Role" Field="ClaimRead" Title="Read Only" HeaderStyle="width:1px" CellStyle="text-align:center" />
+            <Column T="Role" Field="ClaimWrite" Title="Read & Write" HeaderStyle="width:1px" CellStyle="text-align:center" />
+            <Column T="Role" Field="JumlahUser" Title="Jumlah User" HeaderStyle="width:1px" CellStyle="text-align:center" />
+            <AuthorizeView Policy="AkunWrite">
+                <Authorized Context="konteks">
+                    <Column T="Role" HeaderStyle="width:1px" Sortable="false">
+                        <CellTemplate>
+                            <MudStack Row="true" Spacing="1">
+                                <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" OnClick="@(async e => await Form(context.Item))" />
+                                <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(async e => await Hapus(context.Item))" />
+                            </MudStack>
+                        </CellTemplate>
+                    </Column>
+                </Authorized>
+            </AuthorizeView>
+        </Columns>
+        <ChildRowContent>
+            <MudCard Elevation="0">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.button">Claim pada role :</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudDataGrid Elevation="1" Items="context.Item.RoleClaim" ShowColumnOptions="false">
+                        <Columns>
+                            <Column T="RoleClaim" Field="ClaimType" Title="Tipe Claim">
+                                <CellTemplate Context="konteks">
+                                    @(konteks.Item.ClaimType == "Akun" ? "Role, User" : konteks.Item.ClaimType == "Produk" ? "Bahan, Barang, Formulasi" : konteks.Item.ClaimType == "Pekerja" ? "Pekerjaan, Karyawan" : konteks.Item.ClaimType == "Pihak" ? "Supplier, Customer" : konteks.Item.ClaimType == "TransaksiLain" ? "Transaksi Lain" : konteks.Item.ClaimType == "Report" ? "Laporan" : konteks.Item.ClaimType)
+                                </CellTemplate>
+                            </Column>
+                            <Column T="RoleClaim" Field="ClaimValue" Title="Hak Akses">
+                                <CellTemplate Context="konteks">
+                                    <MudText Color="@(konteks.Item.ClaimValue == "W0" ? Color.Error : konteks.Item.ClaimValue == "W1" ? Color.Warning : konteks.Item.ClaimValue == "W2" ? Color.Success : Color.Dark)">
+                                        @(konteks.Item.ClaimValue == "W0" ? "No Access" : konteks.Item.ClaimValue == "W1" ? "Read Only" : konteks.Item.ClaimValue == "W2" ? "Read & Write" : string.Empty)
+                                    </MudText>
+                                </CellTemplate>
+                            </Column>
+                        </Columns>
+                    </MudDataGrid>
+                </MudCardContent>
+            </MudCard>
+        </ChildRowContent>
+        <PagerContent>
+            <MudDataGridPager T="Role" RowsPerPageString="Jumlah baris per halaman" InfoFormat="Menampilkan {first_item} - {last_item} dari {all_items} role" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+<MudMessageBox @ref="deleteDialog" Title="Konfirmasi Hapus">
+    <MessageContent>
+        <MudPaper Elevation="0" MinWidth="300px" Class="mx-5">
+            @pesanHapus
+        </MudPaper>
+    </MessageContent>
+    <NoButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Error" Size="Size.Small">Ya</MudButton>
+    </NoButton>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Dark" Size="Size.Small">Tidak</MudButton>
+    </YesButton>
+</MudMessageBox>

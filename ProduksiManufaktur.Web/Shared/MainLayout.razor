@@ -1,0 +1,169 @@
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+@using Microsoft.AspNetCore.Identity;
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject ProtectedLocalStorage ProtectedLocalStore
+
+<PageTitle>Produksi Manufaktur</PageTitle>
+
+<MudThemeProvider @ref="@mudThemeProvider" IsDarkMode="isDarkMode" Theme="theme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="0" Dense=true>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="DrawerToggle" />
+        <MudBreadcrumbs Items="BreadcrumbItems">
+            <ItemTemplate Context="item">
+                <MudLink Href="@item.Href">@item.Text</MudLink>
+            </ItemTemplate>
+        </MudBreadcrumbs>
+        <MudSpacer />
+        <MudSwitch T="bool" Color="Color.Primary" Checked="@isDarkMode" CheckedChanged="@(async e => await DarkModeChanged(e))" Class="ma-4" />
+        <div class="mt-n4 w-200 mr-4">
+            <MudAutocomplete T="KeyValuePair<string, string>" @ref="inputMenu" OnlyValidateIfDirty="true" Immediate="true" Dense="true" CoerceText="true" ValueChanged="@(e => PilihMenu(e))" SearchFunc="@(async e => await CariMenu(e))" ToStringFunc="@(x => x.Key)" MaxItems="30" Placeholder="Cari menu..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
+        </div>
+        @if(currentUser is not null)
+        {
+            <MudMenu Label="@currentUser.UserName" Dense="true" FullWidth="true" ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+                <MudMenuItem Href="@($"/info-user/{currentUser.Id}")">Info User</MudMenuItem>
+                <MudMenuItem Href="@("/Account/GantiPassword")" ForceLoad="true">Ganti Password</MudMenuItem>
+                <AuthorizeView>
+                    <Authorized>
+                        <MudMenuItem Href="/Account/Logout" ForceLoad="true">Logout</MudMenuItem>
+                    </Authorized>
+                    <NotAuthorized>
+                        <MudMenuItem Href="/Account/Login" ForceLoad="true">Login</MudMenuItem>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </MudMenu>
+        }
+    </MudAppBar>
+    <MudDrawer @bind-Open="@drawerOpen">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent Style="position: relative; min-height: 100vh;">
+        <MudContainer Style="padding: 20px 24px; min-height: 100vh;">
+            <CascadingValue Value="this">
+                @Body
+            </CascadingValue>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
+
+    [Inject]
+    protected UserManager<User> UserManager { get; set; } = null!;
+
+    [Inject]
+    protected NavigationManager To { get; set; } = null!;
+
+    MudThemeProvider? mudThemeProvider = new();
+    MudAutocomplete<KeyValuePair<string, string>>? inputMenu = new();
+    public User currentUser = null!;
+    bool drawerOpen = true;
+    public bool isDarkMode;
+    private string dicari = string.Empty;
+    MudTheme theme = new()
+    {
+        Palette = new Palette()
+        {
+            Primary = Colors.Pink.Accent4,
+            Secondary = Colors.DeepOrange.Default,
+            Tertiary = Colors.DeepPurple.Lighten1,
+            Warning = Colors.Orange.Darken1,
+            AppbarBackground = Colors.Shades.White
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = Colors.Teal.Accent3,
+            Secondary = Colors.DeepOrange.Default,
+            Tertiary = Colors.DeepPurple.Lighten1,
+            Warning = Colors.Orange.Darken1,
+            DrawerIcon = Colors.Grey.Lighten2,
+            DrawerText = Colors.Grey.Lighten2
+        }
+    };
+    public List<BreadcrumbItem> BreadcrumbItems = new() { new BreadcrumbItem("Home", href: "/") };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthenticationState).User;
+        currentUser = await UserManager.GetUserAsync(user) ?? null!;
+        if (currentUser is null)
+        {
+            To.NavigateTo("/Account/Login");
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadDarkMode();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadDarkMode()
+    {
+        var result = await ProtectedLocalStore.GetAsync<bool>("isDark");
+        isDarkMode = result.Success ? result.Value : false;
+    }
+
+    private async Task DarkModeChanged(bool e)
+    {
+        isDarkMode = e;
+        await ProtectedLocalStore.SetAsync("isDark", isDarkMode);
+    }
+
+    protected Dictionary<string, string> listMenu = new()
+    {
+        { "Role", "/role" },
+        { "User", "/user" },
+        { "Log Transaksi", "/log-transaksi" },
+        { "Bahan", "/bahan" },
+        { "Perubahan Stok Bahan", "/bahan/perubahan-stok-bahan" },
+        { "Barang", "/barang" },
+        { "Perubahan Stok Barang", "/barang/perubahan-stok-barang" },
+        { "Formulasi", "/formulasi" },
+        { "Form Formulasi", "/formulasi/form" },
+        { "Pekerjaan", "/pekerjaan" },
+        { "Karyawan", "/karyawan" },
+        { "Supplier", "/supplier" },
+        { "Customer", "/customer" },
+        { "Overhead", "/overhead" },
+        { "Pembelian", "/pembelian" },
+        { "Form Pembelian", "/pembelian/form" },
+        { "Retur Pembelian", "/pembelian/retur" },
+        { "Form Retur Pembelian", "/pembelian/retur/form" },
+        { "Penjualan", "/penjualan" },
+        { "Form Penjualan", "/penjualan/form" },
+        { "Retur Penjualan", "/penjualan/retur" },
+        { "Form Retur Penjualan", "/penjualan/retur/form" },
+        { "Produksi", "/produksi" },
+        { "Form Produksi", "/produksi/form" },
+        { "Transaksi Lain", "/transaksi-lain" },
+        { "Laporan", "/laporan" },
+        { "Profil", "/profil" },
+        { "Dokumentasi", "/dokumentasi" }
+    };
+
+    protected async Task<IEnumerable<KeyValuePair<string, string>>> CariMenu(string value)
+    {
+        value ??= string.Empty;
+        return await Task.FromResult(listMenu.Where(x => x.Key.Contains(value, StringComparison.OrdinalIgnoreCase) || x.Value.Contains(value, StringComparison.OrdinalIgnoreCase)));
+    }
+
+    protected void PilihMenu(KeyValuePair<string, string> value)
+    {
+        inputMenu!.Reset();
+        To.NavigateTo(value.Value);
+    }
+
+    void DrawerToggle() => drawerOpen = !drawerOpen;
+    public void Refresh() => StateHasChanged();
+}

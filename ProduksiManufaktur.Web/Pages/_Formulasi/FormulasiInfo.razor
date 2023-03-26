@@ -1,0 +1,47 @@
+﻿@page "/formulasi/info/{id}"
+@inherits FormulasiInfoBase
+
+<PageTitle>Info @Id - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudText Typo="Typo.h6">@judul</MudText>
+    <MudStack Spacing="1">
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Nama Barang</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @formulasi.Barang!.Nama</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Jumlah</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @formulasi.Jumlah.ToString("g0") @formulasi.Barang!.SatuanProduksi</MudText>
+            </div>
+        </MudStack>
+        <MudDataGrid Class="mt-3" Items="formulasi.FormulasiDetail" Elevation="2" Dense="true" Bordered="true" ShowColumnOptions="false">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Bahan yang dibutuhkan</MudText>
+            </ToolBarContent>
+            <Columns>
+                <Column T="FormulasiDetail" Field="Bahan">
+                    <CellTemplate>
+                        @context.Item.Bahan!.Nama
+                    </CellTemplate>
+                </Column>
+                <Column T="FormulasiDetail" Field="Jumlah" HeaderStyle="width:125px" CellStyle="text-align:center">
+                    <CellTemplate>
+                        @context.Item.Jumlah.ToString("g0") @context.Item.Bahan!.SatuanProduksi
+                    </CellTemplate>
+                </Column>
+            </Columns>
+        </MudDataGrid>
+    </MudStack>
+}

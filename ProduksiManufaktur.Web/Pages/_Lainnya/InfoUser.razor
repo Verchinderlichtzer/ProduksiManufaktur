@@ -1,0 +1,18 @@
+﻿@page "/info-user/{id}"
+@inherits InfoUserBase
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudText Typo="Typo.h5">Info User</MudText>
+    <MudForm Model="user" @ref="form">
+        <MudTextField T="string" Label="Email" Value="user.Email" ReadOnly="true" />
+        <MudTextField T="string" MaxLength="150" Label="Alamat" @bind-Value="user.Alamat" />
+        <MudTextField T="string" MaxLength="24" Label="Nomor Telepon" @bind-Value="user.PhoneNumber" />
+        <MudTextField T="string" MaxLength="50" Label="Tempat Lahir" @bind-Value="user.TempatLahir" />
+        <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="user.InputTanggalLahir" Label="Tanggal Lahir" DateFormat="dd/MM/yyyy" />
+    </MudForm>
+    <MudButton Class="wp-100 ma-2 mt-3" DisableElevation="true" Variant="Variant.Filled" Size="Size.Small" Color="Color.Success" OnClick="(async () => await Save())">Simpan</MudButton>
+}

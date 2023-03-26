@@ -1,0 +1,28 @@
+﻿@page "/dokumentasi"
+@inherits DokumentasiBase
+
+<h3>Dokumentasi</h3>
+
+
+
+<MudPaper>
+    <MudPaper MinHeight="1250px" Width="850px" Elevation="0">
+        <section id="satu">
+            <h1>Satu</h1>
+        </section>
+        <section id="dua">
+            <h1>Dua</h1>
+        </section>
+    </MudPaper>
+    
+    <MudPaper Width="240px" Style="position: fixed; right: 0; top: 48px; bottom: 0;" Elevation="0">
+        <MudTimeline TimelinePosition="TimelinePosition.Left">
+            <MudTimelineItem Class="satu">
+                <MudText Style="cursor: pointer;" @onclick="@(() => NavigateToSection("satu"))">Item A</MudText>
+            </MudTimelineItem>
+            <MudTimelineItem Class="dua">
+                <MudText Style="cursor: pointer;" @onclick="@(() => NavigateToSection("dua"))">Item B</MudText>
+            </MudTimelineItem>
+        </MudTimeline>
+    </MudPaper>
+</MudPaper>

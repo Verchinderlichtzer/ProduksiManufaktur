@@ -1,0 +1,62 @@
+﻿@page "/profil"
+@inherits ProfilFormBase
+
+@if (profil is null)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudCard Elevation="2">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5">
+                    Profil Perusahaan
+                </MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudForm Model="profil" @ref="form">
+                <MudStack Row="true">
+                    <div class="flex-4">
+                        <MudTextField T="string" OnlyValidateIfDirty="true" Immediate="true" Label="Nama profil" @bind-Value="profil.Nama" MaxLength="50" AutoFocus="true" />
+                        <MudTextField T="string" Lines="2" OnlyValidateIfDirty="true" Immediate="true" Label="Alamat" @bind-Value="profil.Alamat" MaxLength="150" />
+                        <MudStack Row="true">
+                            <MudTextField T="string" OnlyValidateIfDirty="true" Immediate="true" Label="Telepon" @bind-Value="profil.Telepon" MaxLength="24" />
+                            <MudTextField T="string" OnlyValidateIfDirty="true" Immediate="true" Label="Fax" @bind-Value="profil.Fax" MaxLength="24" />
+                        </MudStack>
+                        <MudStack Row="true">
+                            <MudTextField T="string" OnlyValidateIfDirty="true" Immediate="true" Label="Email" @bind-Value="profil.Email" MaxLength="40" />
+                            <MudTextField T="string" OnlyValidateIfDirty="true" Immediate="true" Label="Website" @bind-Value="profil.Website" MaxLength="30" />
+                        </MudStack>
+                        <MudStack Row="true">
+                            <MudTextField T="string" OnlyValidateIfDirty="true" Immediate="true" Label="Pengurus" @bind-Value="profil.Pengurus" MaxLength="50" />
+                            <MudTextField T="string" OnlyValidateIfDirty="true" Immediate="true" Label="Jabatan" @bind-Value="profil.Jabatan" MaxLength="30" />
+                        </MudStack>
+                    </div>
+                    <div class="flex-1">
+                        <MudImage Src="@(string.Format($"data:image/gif;base64,{Convert.ToBase64String(profil.Logo!)}"))" Fluid="true" Width="205" Height="205" Alt="Logo" />
+                        <MudFileUpload T="IBrowserFile" Accept=".jpg, .png" FilesChanged="UploadFiles">
+                            <ButtonTemplate>
+                                <MudButton HtmlTag="label" Variant="Variant.Filled" Size="Size.Small" Color="Color.Success" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">
+                                    Upload Logo
+                                </MudButton>
+                            </ButtonTemplate>
+                        </MudFileUpload>
+                        <MudText Typo="Typo.caption">
+                            <div>Ekstensi logo harus jpg/png</div>
+                            <div>Ukuran maksimal 512 KB</div>
+                        </MudText>
+                    </div>
+                </MudStack>
+            </MudForm>
+        </MudCardContent>
+        <MudCardActions>
+            <AuthorizeView Roles="Admin">
+                <Authorized Context="konteks">
+                    <MudButton Class="wp-100 ma-2" DisableElevation="true" Variant="Variant.Filled" Size="Size.Small" Color="Color.Success" OnClick="(async () => await Save())">Simpan</MudButton>
+                </Authorized>
+            </AuthorizeView>
+        </MudCardActions>
+    </MudCard>
+}

@@ -1,0 +1,95 @@
+﻿<MudNavMenu Bordered="true" >
+    <MudLink Href="/">
+        <MudImage Src="/img/logo.png" Width="240" Height="96" ObjectFit="ObjectFit.Cover" />
+    </MudLink>
+
+    <MudNavGroup Title="Akun" Expanded="true">
+        <AuthorizeView Policy="AkunRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.Star" Match="NavLinkMatch.Prefix" Href="/role">Role</MudNavLink>
+                <MudNavLink Icon="@Icons.Material.Filled.Person" Match="NavLinkMatch.Prefix" Href="/user">User</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <MudNavLink Icon="@Icons.Material.Filled.Class" Match="NavLinkMatch.Prefix" Href="/log-transaksi">Log Transaksi</MudNavLink>
+    </MudNavGroup>
+    
+    <MudNavGroup Title="Master" Expanded="true">
+        <AuthorizeView Policy="ProdukRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.CorporateFare" Match="NavLinkMatch.Prefix" Href="/bahan">Bahan</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="ProdukRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.DashboardCustomize" Match="NavLinkMatch.Prefix" Href="/barang">Barang</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="ProdukRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.Grain" Match="NavLinkMatch.Prefix" Href="/formulasi">Formulasi</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="PekerjaRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.Handyman" Match="NavLinkMatch.Prefix" Href="/pekerjaan">Pekerjaan</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="PekerjaRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.Engineering" Match="NavLinkMatch.Prefix" Href="/karyawan">Karyawan</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="PihakRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.Group" Match="NavLinkMatch.Prefix" Href="/supplier">Supplier</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="PihakRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.FamilyRestroom" Match="NavLinkMatch.Prefix" Href="/customer">Customer</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="OverheadRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.Payments" Match="NavLinkMatch.Prefix" Href="/overhead">Overhead</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+    </MudNavGroup>
+
+    <MudNavGroup Title="Transaksi" Expanded="true">
+        <AuthorizeView Policy="PembelianRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.ShoppingCart" Match="NavLinkMatch.Prefix" Href="/pembelian">Pembelian</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="PenjualanRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.Sell" Match="NavLinkMatch.Prefix" Href="/penjualan">Penjualan</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="ProduksiRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.Add" Match="NavLinkMatch.Prefix" Href="/produksi">Produksi</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="TransaksiLainRead">
+            <Authorized>
+                <MudNavLink Icon="@Icons.Material.Filled.AttachMoney" Match="NavLinkMatch.Prefix" Href="/transaksi-lain">Transaksi Lain</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
+    </MudNavGroup>
+
+    <AuthorizeView Policy="ReportRead">
+        <Authorized>
+            <MudNavGroup Title="Laporan" Expanded="true">
+                <MudNavLink Icon="@Icons.Material.Filled.IncompleteCircle" Match="NavLinkMatch.Prefix" Href="/laporan">Laporan</MudNavLink>
+            </MudNavGroup>
+        </Authorized>
+    </AuthorizeView>
+    
+    <MudNavGroup Title="Lainnya" Expanded="true">
+        <MudNavLink Icon="@Icons.Material.Filled.Info" Match="NavLinkMatch.Prefix" Href="/profil">Profil Perusahaan</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.Help" Match="NavLinkMatch.Prefix" Href="/dokumentasi">Dokumentasi</MudNavLink>
+    </MudNavGroup>
+
+</MudNavMenu>

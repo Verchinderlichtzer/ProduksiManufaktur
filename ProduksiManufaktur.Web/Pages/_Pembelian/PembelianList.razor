@@ -1,0 +1,90 @@
+﻿@page "/pembelian"
+@inherits PembelianListBase
+
+<PageTitle>Pembelian - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudDataGrid Items="listPembelian" Elevation="2" Dense="true" Bordered="true" QuickFilter="FilterSearch" ShowColumnOptions="false">
+        <ToolBarContent>
+            <MudStack Row="true" Spacing="2">
+                <MudText Typo="Typo.h5">Daftar Pembelian</MudText>
+                <AuthorizeView Policy="PembelianWrite">
+                    <Authorized Context="konteks">
+                        <MudTooltip Text="Tambah Pembelian" Arrow="true" Placement="Placement.Bottom">
+                            <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Add" Color="Color.Success" OnClick="@(e => To.NavigateTo($"/pembelian/form"))" />
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
+                <AuthorizeView Policy="PembelianWrite">
+                    <Authorized Context="konteks">
+                        <MudTooltip Text="Retur Pembelian" Arrow="true" Placement="Placement.Bottom">
+                            <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.KeyboardReturn" Color="Color.Secondary" OnClick="@(e => To.NavigateTo($"/pembelian/retur"))" />
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+            <MudSpacer />
+            <MudTextField Immediate="true" @bind-Value="dicari" Placeholder="Cari pembelian..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        </ToolBarContent>
+        <Columns>
+            <Column T="Pembelian" Field="Id" Title="ID" HeaderStyle="width:133px" />
+            <Column T="Pembelian" Field="Tanggal" HeaderStyle="width:145px">
+                <CellTemplate>
+                    @context.Item.Tanggal.ToString("dd/MM/yyyy HH.mm")
+                </CellTemplate>
+            </Column>
+            <Column T="Pembelian" Field="Supplier" Title="Nama Supplier">
+                <CellTemplate>
+                    @context.Item.Supplier!.Nama
+                </CellTemplate>
+            </Column>
+            <Column T="Pembelian" Field="GrandTotal" Title="Grand Total" HeaderStyle="width:1px" CellStyle="text-align:right">
+                <CellTemplate>
+                    @context.Item.GrandTotal.ToString("n0")
+                </CellTemplate>
+            </Column>
+            <Column T="Pembelian" Field="Status" HeaderStyle="width:125px" CellStyle="text-align:center">
+                <CellTemplate>
+                    <MudText Color="@(context.Item.Status == "Lunas" ? Color.Success : Color.Error)">
+                        @context.Item.Status
+                    </MudText>
+                </CellTemplate>
+            </Column>
+            <Column T="Pembelian" HeaderStyle="width:1px" Sortable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1">
+                        <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Info" Color="Color.Info" OnClick="@(e => To.NavigateTo($"/pembelian/info/{context.Item.Id}"))" />
+                        <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Tertiary" OnClick="@(e => To.NavigateTo($"/pembelian/transaksi/{context.Item.Id}"))" />
+                        <AuthorizeView Roles="Admin">
+                            <Authorized Context="konteks">
+                                <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" OnClick="@(e => To.NavigateTo($"/pembelian/form/{context.Item.Id}"))" />
+                                <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(e => Hapus(context.Item))" />
+                            </Authorized>
+                        </AuthorizeView>
+                    </MudStack>
+                </CellTemplate>
+            </Column>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Pembelian" RowsPerPageString="Jumlah baris per halaman" InfoFormat="Menampilkan {first_item} - {last_item} dari {all_items} pembelian" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+<MudMessageBox @ref="deleteDialog" Title="Konfirmasi Hapus">
+    <MessageContent>
+        <MudPaper Elevation="0" MinWidth="300px" Class="mx-5">
+            @pesanHapus
+        </MudPaper>
+    </MessageContent>
+    <NoButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Error" Size="Size.Small">Ya</MudButton>
+    </NoButton>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Dark" Size="Size.Small">Tidak</MudButton>
+    </YesButton>
+</MudMessageBox>

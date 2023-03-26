@@ -1,0 +1,76 @@
+﻿@page "/pembelian/retur"
+@inherits ReturPembelianListBase
+
+<PageTitle>Retur Pembelian - Produksi Manufaktur</PageTitle>
+@if (listReturPembelian is null)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudDataGrid Items="listReturPembelian" Elevation="2" Dense="true" Bordered="true" QuickFilter="FilterSearch" ShowColumnOptions="false">
+        <ToolBarContent>
+            <MudStack Row="true" Spacing="2">
+                <MudText Typo="Typo.h5">Daftar Retur Pembelian</MudText>
+                <AuthorizeView Policy="ProdukWrite">
+                    <Authorized Context="konteks">
+                        <MudTooltip Text="Tambah Retur Pembelian" Arrow="true" Placement="Placement.Bottom">
+                            <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Add" Color="Color.Success" OnClick="@(e => To.NavigateTo("/pembelian/retur/form"))" />
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+            <MudSpacer />
+            <MudTextField Immediate="true" @bind-Value="dicari" Placeholder="Cari retur pembelian..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        </ToolBarContent>
+        <Columns>
+            <Column T="ReturPembelian" Field="Id" Title="ID" HeaderStyle="width:146px" />
+            <Column T="ReturPembelian" Field="Tanggal" HeaderStyle="width:145px" CellStyle="text-align:center">
+                <CellTemplate>
+                    @context.Item.Tanggal.ToString("dd/MM/yyyy HH.mm")
+                </CellTemplate>
+            </Column>
+            <Column T="ReturPembelian" Field="GrandTotal" Title="Grand Total" HeaderStyle="width:1px" CellStyle="text-align:right">
+                <CellTemplate>
+                    @context.Item.GrandTotal.ToString("n0")
+                </CellTemplate>
+            </Column>
+            <Column T="ReturPembelian" Field="Pembelian" Title="Nama Supplier" HeaderStyle="width:230px">
+                <CellTemplate>
+                    @context.Item.Pembelian!.Supplier!.Nama
+                </CellTemplate>
+            </Column>
+            <Column T="ReturPembelian" Field="Keterangan" />
+            <Column T="ReturPembelian" HeaderStyle="width:1px" Sortable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1">
+                        <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Info" Color="Color.Info" OnClick="@(e => To.NavigateTo($"/pembelian/retur/info/{context.Item.Id}"))" />
+                        <AuthorizeView Roles="Admin">
+                            <Authorized Context="konteks">
+                                <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" OnClick="@(e => To.NavigateTo($"/pembelian/retur/form/{context.Item.Id}"))" />
+                                <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(e => Hapus(context.Item))" />
+                            </Authorized>
+                        </AuthorizeView>
+                    </MudStack>
+                </CellTemplate>
+            </Column>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="ReturPembelian" RowsPerPageString="Jumlah baris per halaman" InfoFormat="Menampilkan {first_item} - {last_item} dari {all_items} retur pembelian" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+<MudMessageBox @ref="deleteDialog" Title="Konfirmasi Hapus">
+    <MessageContent>
+        <MudPaper Elevation="0" MinWidth="300px" Class="mx-5">
+            @pesanHapus
+        </MudPaper>
+    </MessageContent>
+    <NoButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Error" Size="Size.Small">Ya</MudButton>
+    </NoButton>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Dark" Size="Size.Small">Tidak</MudButton>
+    </YesButton>
+</MudMessageBox>

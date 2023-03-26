@@ -1,0 +1,99 @@
+﻿@page "/pembelian/retur/form"
+@page "/pembelian/retur/form/{id}"
+@inherits ReturPembelianFormBase
+
+<PageTitle>Form Retur Pembelian - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudPaper Elevation="0" Class="mt-3 pa-4">
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@icon" Class="mr-3 mb-n1" />
+            @judul
+        </MudText>
+        <MudForm Model="returPembelian" @ref="form" Validation="@(validator.ValidateValue)">
+            <div class="w-150">
+                <MudAutocomplete T="Pembelian" For="(() => returPembelian.Pembelian)" Dense="true" Label="Pembelian" Value="returPembelian.Pembelian" ValueChanged="@(async e => await PilihPembelian(e))" OnlyValidateIfDirty="true" Immediate="true" CoerceText="true" ReadOnly="@(!baru)" SearchFunc="@(async e => await CariPembelian(e))" AutoFocus="true" ToStringFunc="@(x => x is null ? null : x.Id)" MaxItems="80" />
+            </div>
+            <MudStack Row="true">
+                <MudStack Row="true" Class="w-250">
+                    <div class="flex-5">
+                        <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="returPembelian.InputTanggal" Label="Tanggal" DateFormat="dd/MM/yyyy" />
+                    </div>
+                    <div class="flex-3">
+                        <MudTimePicker PickerVariant="PickerVariant.Dialog" @bind-Time="returPembelian.InputWaktu" Label="Waktu" />
+                    </div>
+                </MudStack>
+                <MudSpacer />
+                <div class="w-150">
+                    <MudNumericField T="int" Label="Grand Total" ReadOnly="true" tabindex="-1" Value="returPembelian.GrandTotal" HideSpinButtons="true" Format="n0" Adornment="Adornment.Start" AdornmentText="Rp" />
+                </div>
+            </MudStack>
+            <MudTextField T="string" MaxLength="200" Label="Keterangan" @bind-Value="returPembelian.Keterangan" />
+        </MudForm>
+        <MudPaper Elevation="0" Class="mt-3">
+            @if (!string.IsNullOrEmpty(returPembelian.PembelianId))
+            {
+                <MudDataGrid Items="returPembelian.ReturPembelianDetail" Class="mt-3" Elevation="2" Dense="true" Bordered="true" ShowColumnOptions="false">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Bahan yang dikembalikan</MudText>
+                    </ToolBarContent>
+                    <Columns>
+                        <Column T="ReturPembelianDetail" Field="BahanSatuan" Title="Nama Bahan">
+                            <CellTemplate>
+                                @context.Item.BahanSatuan!.Bahan!.Nama
+                            </CellTemplate>
+                        </Column>
+                        <Column T="ReturPembelianDetail" Field="Harga" HeaderStyle="width:110px" CellStyle="text-align:right">
+                            <CellTemplate>
+                                @context.Item.Harga.ToString("n0")
+                            </CellTemplate>
+                        </Column>
+                        <Column T="ReturPembelianDetail" Field="Jumlah" HeaderStyle="width:225px">
+                            <CellTemplate>
+                                <MudNumericField T="decimal" Class="mt-n1" Immediate="true" Value="context.Item.Jumlah" Adornment="Adornment.End" AdornmentText="@($"/ {context.Item.MaxJumlah:g0} {(string.IsNullOrEmpty(context.Item.BahanSatuan!.Ukuran) ? context.Item.BahanSatuan!.Nama : $"{context.Item.BahanSatuan!.Nama} ({context.Item.BahanSatuan!.Ukuran})")}")" ValueChanged="@(e => {context.Item.Jumlah = decimal.Round(e, 2); Hitung(); context.Item.Total = (int)(e * context.Item.Harga);})" Min="0" Max="@context.Item.MaxJumlah" HideSpinButtons="true" Format="g0" />
+                            </CellTemplate>
+                        </Column>
+                        <Column T="ReturPembelianDetail" Field="Total" HeaderStyle="width:130px" CellStyle="text-align:right">
+                            <CellTemplate>
+                                @context.Item.Total.ToString("n0")
+                            </CellTemplate>
+                        </Column>
+                    </Columns>
+                </MudDataGrid>
+            }
+        </MudPaper>
+        <MudStack Row="true" Class="mt-4">
+            <div>
+                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Help" @onmouseenter="@(() => popupTerbuka = true)" @onmouseleave="@(() => popupTerbuka = false)" />
+                <MudPopover Open="@popupTerbuka" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.BottomLeft" Fixed="true" Class="px-4">
+                    <MudStack Spacing="0" Class="pb-2">
+                        <MudText Typo="Typo.button" Class="pt-2">Pembelian :</MudText>
+                        <div>▪ Tidak boleh kosong</div>
+                        <MudText Typo="Typo.button" Class="pt-2">Bahan :</MudText>
+                        <div>▪ Jumlah bahan tidak boleh kosong semua</div>
+                        <div>▪ Jumlah bahan tidak boleh melebihi jumlah beli</div>
+                        <div>▪ Jumlah bahan tidak boleh melebihi stok saat ini</div>
+                    </MudStack>
+                </MudPopover>
+            </div>
+            @if (result is null)
+            {
+                <MudText Typo="Typo.caption" Color="Color.Error" @onclick="@(async e => await Refresh())" Style="cursor: pointer;">@pesan</MudText>
+            }
+            <MudSpacer />
+            <MudStack Row="true" Spacing="2">
+                <MudButton Variant="Variant.Filled" Size="Size.Small" Color="@warna" OnClick="(async () => await Save())" Disabled="@(result is null || returPembelian.ReturPembelianDetail?.All(x => x.Jumlah == 0) == true)">Simpan</MudButton>
+                <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Dark" OnClick="@(e => To.NavigateTo("/pembelian/retur"))">Batal</MudButton>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
+}
+
+@if (!string.IsNullOrEmpty(returPembelian.PembelianId) || !string.IsNullOrEmpty(returPembelian.Keterangan) || returPembelian.GrandTotal > 0)
+{
+    <NavigationLock ConfirmExternalNavigation="true" />
+}

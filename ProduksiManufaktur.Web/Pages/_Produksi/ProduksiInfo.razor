@@ -1,0 +1,124 @@
+﻿@page "/produksi/info/{id}"
+
+@inherits ProduksiInfoBase
+
+<PageTitle>Info @Id - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudGrid>
+        <MudItem xs="12" md="12" lg="12">
+            <MudText Typo="Typo.h6">@judul</MudText>
+            <MudStack Spacing="1">
+                <MudStack Row="true" Spacing="0">
+                    <div class="w-125">
+                        <MudText Typo="Typo.body1">Tanggal</MudText>
+                    </div>
+                    <div class="flex-1">
+                        <MudText Typo="Typo.body1">: @produksi.Tanggal.ToString("dd/MM/yyyy hh.mm tt")</MudText>
+                    </div>
+                </MudStack>
+                <MudStack Row="true" Spacing="0">
+                    <div class="w-125">
+                        <MudText Typo="Typo.body1">Nama Barang</MudText>
+                    </div>
+                    <div class="flex-1">
+                        <MudText Typo="Typo.body1">: @produksi.Barang!.Nama</MudText>
+                    </div>
+                </MudStack>
+                <MudStack Row="true" Spacing="0">
+                    <div class="w-125">
+                        <MudText Typo="Typo.body1">Jumlah</MudText>
+                    </div>
+                    <div class="flex-1">
+                        <MudText Typo="Typo.body1">: @produksi.Jumlah.ToString("g0") @produksi.Barang!.SatuanProduksi</MudText>
+                    </div>
+                </MudStack>
+                <MudStack Row="true" Spacing="0">
+                    <div class="w-125">
+                        <MudText Typo="Typo.body1">Biaya Jasa</MudText>
+                    </div>
+                    <div class="flex-1">
+                        <MudText Typo="Typo.body1">: @produksi.BiayaJasa.ToString("c0")</MudText>
+                    </div>
+                </MudStack>
+                <MudStack Row="true" Spacing="0">
+                    <div class="w-125">
+                        <MudText Typo="Typo.body1">Biaya Overhead</MudText>
+                    </div>
+                    <div class="flex-1">
+                        <MudText Typo="Typo.body1">: @produksi.BiayaOverhead.ToString("c0")</MudText>
+                    </div>
+                </MudStack>
+                <MudStack Row="true" Spacing="0">
+                    <div class="w-125">
+                        <MudText Typo="Typo.body1">Keterangan</MudText>
+                    </div>
+                    <div class="flex-1">
+                        <MudText Typo="Typo.body1">: @produksi.Keterangan</MudText>
+                    </div>
+                </MudStack>
+            </MudStack>
+        </MudItem>
+        <MudItem xs="12" md="12" Class="py-0">
+            <MudDataGrid Class="mt-3" Items="produksi.ProduksiDetailBahan" Elevation="2" Dense="true" Bordered="true" ShowColumnOptions="false">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Bahan yang dipakai</MudText>
+                </ToolBarContent>
+                <Columns>
+                    <Column T="ProduksiDetailBahan" Field="Bahan" Title="Nama Bahan">
+                        <CellTemplate>
+                            @context.Item.Bahan!.Nama
+                        </CellTemplate>
+                    </Column>
+                    <Column T="ProduksiDetailBahan" Field="Jumlah" HeaderStyle="width:125px" CellStyle="text-align:right">
+                        <CellTemplate>
+                            @context.Item.Jumlah.ToString("g0") @context.Item.Bahan!.SatuanProduksi
+                        </CellTemplate>
+                    </Column>
+                </Columns>
+            </MudDataGrid>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudDataGrid Class="mt-3" Items="produksi.ProduksiDetailJasa" Elevation="2" Dense="true" Bordered="true" ShowColumnOptions="false">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Karyawan yang Bekerja</MudText>
+                </ToolBarContent>
+                <Columns>
+                    <Column T="ProduksiDetailJasa" Field="Karyawan" Title="Nama Karyawan">
+                        <CellTemplate>
+                            @context.Item.Karyawan!.Nama
+                        </CellTemplate>
+                    </Column>
+                    <Column T="ProduksiDetailJasa" Field="Biaya" HeaderStyle="width:125px" CellStyle="text-align:right">
+                        <CellTemplate>
+                            @context.Item.Biaya.ToString("c0")
+                        </CellTemplate>
+                    </Column>
+                </Columns>
+            </MudDataGrid>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudDataGrid Class="mt-3" Items="produksi.ProduksiDetailOverhead" Elevation="2" Dense="true" Bordered="true" ShowColumnOptions="false">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Biaya overhead</MudText>
+                </ToolBarContent>
+                <Columns>
+                    <Column T="ProduksiDetailOverhead" Field="Overhead" Title="Nama Overhead">
+                        <CellTemplate>
+                            @context.Item.Overhead!.Nama
+                        </CellTemplate>
+                    </Column>
+                    <Column T="ProduksiDetailOverhead" Field="Biaya" HeaderStyle="width:125px" CellStyle="text-align:right">
+                        <CellTemplate>
+                            @context.Item.Biaya.ToString("c0")
+                        </CellTemplate>
+                    </Column>
+                </Columns>
+            </MudDataGrid>
+        </MudItem>
+    </MudGrid>
+}

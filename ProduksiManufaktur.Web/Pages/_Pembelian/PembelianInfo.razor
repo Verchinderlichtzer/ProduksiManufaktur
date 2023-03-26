@@ -1,0 +1,135 @@
+﻿@page "/pembelian/info/{id}"
+@inherits PembelianInfoBase
+
+<PageTitle>Info @Id - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudText Typo="Typo.h6">@judul</MudText>
+    <MudStack Spacing="1">
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Nama Supplier</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @pembelian.Supplier!.Nama</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Tanggal</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @pembelian.Tanggal.ToString("dd/MM/yyyy hh.mm tt")</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Subtotal</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @pembelian.Subtotal.ToString("c0")</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">PPN</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @pembelian.PPN %</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Grand Total</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @pembelian.GrandTotal.ToString("c0")</MudText>
+            </div>
+        </MudStack>
+        @if (pembelian.Status == "Belum Lunas")
+        {
+            <MudStack Row="true" Spacing="0">
+                <div class="w-125">
+                    <MudText Typo="Typo.body1">Terbayar</MudText>
+                </div>
+                <div class="flex-1">
+                    <MudText Typo="Typo.body1">: @pembelian.Terbayar.ToString("c0")</MudText>
+                </div>
+            </MudStack>
+            <MudStack Row="true" Spacing="0">
+                <div class="w-125">
+                    <MudText Typo="Typo.body1">Sisa</MudText>
+                </div>
+                <div class="flex-1">
+                    <MudText Typo="Typo.body1">: @pembelian.Sisa.ToString("c0")</MudText>
+                </div>
+            </MudStack>
+        }
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Metode Bayar</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @pembelian.MetodeBayar</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Status</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @pembelian.Status</MudText>
+            </div>
+        </MudStack>
+        @if (pembelian.MetodeBayar == "Kredit")
+        {
+            <MudStack Row="true" Spacing="0">
+                <div class="w-125">
+                    <MudText Typo="Typo.body1">Jatuh Tempo</MudText>
+                </div>
+                <div class="flex-1">
+                    <MudText Typo="Typo.body1">: @($"{pembelian.JatuhTempo?.ToString("dd/MM/yyyy")} ({pembelian.HariJatuhTempo} hari)")</MudText>
+                </div>
+            </MudStack>
+        }
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Keterangan</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @pembelian.Keterangan</MudText>
+            </div>
+        </MudStack>
+        <MudDataGrid Class="mt-3" Items="pembelian.PembelianDetail" Elevation="2" Dense="true" Bordered="true" ShowColumnOptions="false">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Bahan yang dibeli</MudText>
+            </ToolBarContent>
+            <Columns>
+                <Column T="PembelianDetail" Field="BahanSatuan" Title="Nama Bahan">
+                    <CellTemplate>
+                        @context.Item.BahanSatuan!.Bahan!.Nama
+                    </CellTemplate>
+                </Column>
+                <Column T="PembelianDetail" Field="Harga" HeaderStyle="width:125px" CellStyle="text-align:right">
+                    <CellTemplate>
+                        @context.Item.Harga.ToString("n0")
+                    </CellTemplate>
+                </Column>
+                <Column T="PembelianDetail" Field="Jumlah" HeaderStyle="width:180px" CellStyle="text-align:center">
+                    <CellTemplate>
+                        @context.Item.Jumlah.ToString("g0") @(string.IsNullOrEmpty(context.Item.BahanSatuan!.Ukuran) ? context.Item.BahanSatuan!.Nama : $"{context.Item.BahanSatuan!.Nama} ({context.Item.BahanSatuan!.Ukuran})")
+                    </CellTemplate>
+                </Column>
+                <Column T="PembelianDetail" Field="Total" HeaderStyle="width:125px" CellStyle="text-align:right">
+                    <CellTemplate>
+                        @context.Item.Total.ToString("n0")
+                    </CellTemplate>
+                </Column>
+            </Columns>
+        </MudDataGrid>
+    </MudStack>
+}

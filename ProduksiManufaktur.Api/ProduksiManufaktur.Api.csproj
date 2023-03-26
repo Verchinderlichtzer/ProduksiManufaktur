@@ -1,0 +1,83 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\DataSetProduksiManufaktur.cs" />
+    <Content Remove="wwwroot\DataSetProduksiManufaktur.Designer.cs" />
+    <Content Remove="wwwroot\DataSetProduksiManufaktur.xsc" />
+    <Content Remove="wwwroot\DataSetProduksiManufaktur.xsd" />
+    <Content Remove="wwwroot\DataSetProduksiManufaktur.xss" />
+    <Content Remove="wwwroot\LaporanEntitasReturPembelian.rdlc" />
+    <Content Remove="wwwroot\LaporanEntitasReturPenjualan.rdlc" />
+    <Content Remove="wwwroot\LaporanMasterBahan.rdlc" />
+    <Content Remove="wwwroot\LaporanMasterBarang.rdlc" />
+    <Content Remove="wwwroot\LaporanPenggajian.rdlc" />
+    <Content Remove="wwwroot\LaporanTransaksiProduksi.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="wwwroot\DataSetProduksiManufaktur.cs" />
+    <Compile Include="wwwroot\DataSetProduksiManufaktur.Designer.cs">
+      <DependentUpon>DataSetProduksiManufaktur.xsd</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\DataSetProduksiManufaktur.xsc" />
+    <None Include="wwwroot\DataSetProduksiManufaktur.xsd">
+      <SubType>Designer</SubType>
+      <LastGenOutput>DataSetProduksiManufaktur.Designer.cs</LastGenOutput>
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
+    <None Include="wwwroot\DataSetProduksiManufaktur.xss" />
+    <None Include="wwwroot\LaporanEntitasReturPenjualan.rdlc" />
+    <None Include="wwwroot\LaporanEntitasReturPembelian.rdlc" />
+    <None Include="wwwroot\LaporanTransaksiProduksi.rdlc" />
+    <None Include="wwwroot\LaporanMasterBahan.rdlc" />
+    <None Include="wwwroot\LaporanMasterBarang.rdlc" />
+    <None Include="wwwroot\LaporanTransaksiTransaksiLain.rdlc" />
+    <None Include="wwwroot\LaporanMasterCustomer.rdlc" />
+    <None Include="wwwroot\LaporanGrafikBatang.rdlc" />
+    <None Include="wwwroot\LaporanGrafikGaris.rdlc" />
+    <None Include="wwwroot\LaporanEntitasCustomer.rdlc" />
+    <None Include="wwwroot\LaporanEntitasFormulasi.rdlc" />
+    <None Include="wwwroot\LaporanEntitasFakturPembelian.rdlc" />
+    <None Include="wwwroot\LaporanEntitasPenggajian.rdlc" />
+    <None Include="wwwroot\LaporanEntitasFakturPenjualan.rdlc" />
+    <None Include="wwwroot\LaporanEntitasStokBahan.rdlc" />
+    <None Include="wwwroot\LaporanEntitasStokBarang.rdlc" />
+    <None Include="wwwroot\LaporanEntitasSupplier.rdlc" />
+    <None Include="wwwroot\LaporanMasterKaryawan.rdlc" />
+    <None Include="wwwroot\LaporanTransaksiKas.rdlc" />
+    <None Include="wwwroot\LaporanTransaksiPembelian.rdlc" />
+    <None Include="wwwroot\LaporanTransaksiPenjualan.rdlc" />
+    <None Include="wwwroot\LaporanEntitasProduksi.rdlc" />
+    <None Include="wwwroot\LaporanMasterSupplier.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="3.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.17" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.26.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProduksiManufaktur.Models\ProduksiManufaktur.Models.csproj" />
+  </ItemGroup>
+
+</Project>

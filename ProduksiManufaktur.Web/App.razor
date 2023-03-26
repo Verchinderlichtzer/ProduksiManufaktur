@@ -1,0 +1,30 @@
+﻿@inject NavigationManager To
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    @if (!context.User.Identity!.IsAuthenticated)
+                    {
+                        var returnUrl = To.ToBaseRelativePath(To.Uri); // DENGAN RETURN URL
+                        <RedirectToLogin ReturnUrl="@returnUrl" />
+                    }
+                    else
+                    {
+                        <ProduksiManufaktur.Web.Shared.Error.Unauthorized />
+                    }
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            @*<FocusOnNavigate RouteData="@routeData" Selector="h1" />*@
+        </Found>
+        <NotFound>
+            <PageTitle>Error - Produksi Manufaktur</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <ChildContent>
+                    <ProduksiManufaktur.Web.Shared.Error.NotFound />
+                </ChildContent>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

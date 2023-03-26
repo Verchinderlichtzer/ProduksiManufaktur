@@ -1,0 +1,111 @@
+﻿@inherits RoleFormBase
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@icon" Class="mr-3 mb-n1" />
+            @judul
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudContainer Class="h-375">
+            <MudForm Model="Role" @ref="form" Validation="@(validator.ValidateValue)">
+                <MudTextField T="string" OnlyValidateIfDirty="true" Immediate="true" For="(() => Role.Name)" MaxLength="20" Label="Nama Role" @bind-Value="Role.Name" AutoFocus="true" />
+                <MudStack>
+                    <MudText Class="mt-3" Typo="Typo.h6">Hak Akses Form Master</MudText>
+                    <MudStack Row="true" Justify="Justify.SpaceBetween">
+                        <MudStack Class="flex-1" Spacing="0">
+                            <MudSelect T="string" Dense="true" @bind-Value="@(roleClaim["Akun"])" Label="Role, User" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@("W0")">@("No Access")</MudSelectItem>
+                                <MudSelectItem Value="@("W1")">@("Read Only")</MudSelectItem>
+                                <MudSelectItem Value="@("W2")">@("Read & Write")</MudSelectItem>
+                            </MudSelect>
+                            <MudSelect T="string" Dense="true" @bind-Value="@(roleClaim["Pekerja"])" Label="Pekerjaan, Karyawan" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@("W0")">@("No Access")</MudSelectItem>
+                                <MudSelectItem Value="@("W1")">@("Read Only")</MudSelectItem>
+                                <MudSelectItem Value="@("W2")">@("Read & Write")</MudSelectItem>
+                            </MudSelect>
+                            <MudSelect T="string" Dense="true" @bind-Value="@(roleClaim["Overhead"])" Label="Overhead" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@("W0")">@("No Access")</MudSelectItem>
+                                <MudSelectItem Value="@("W1")">@("Read Only")</MudSelectItem>
+                                <MudSelectItem Value="@("W2")">@("Read & Write")</MudSelectItem>
+                            </MudSelect>
+                        </MudStack>
+                        <MudStack Class="flex-1" Spacing="0">
+                            <MudSelect T="string" Dense="true" @bind-Value="@(roleClaim["Produk"])" Label="Bahan, Barang, Formulasi" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@("W0")">@("No Access")</MudSelectItem>
+                                <MudSelectItem Value="@("W1")">@("Read Only")</MudSelectItem>
+                                <MudSelectItem Value="@("W2")">@("Read & Write")</MudSelectItem>
+                            </MudSelect>
+                            <MudSelect T="string" Dense="true" @bind-Value="@(roleClaim["Pihak"])" Label="Supplier, Customer" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@("W0")">@("No Access")</MudSelectItem>
+                                <MudSelectItem Value="@("W1")">@("Read Only")</MudSelectItem>
+                                <MudSelectItem Value="@("W2")">@("Read & Write")</MudSelectItem>
+                            </MudSelect>
+                        </MudStack>
+                    </MudStack>
+                    <MudText Class="mt-3" Typo="Typo.h6">Hak Akses Form Transaksi</MudText>
+                    <MudStack Row="true" Justify="Justify.SpaceBetween">
+                        <MudStack Class="flex-1" Spacing="0">
+                            <MudSelect T="string" Dense="true" @bind-Value="@(roleClaim["Pembelian"])" Label="Pembelian" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@("W0")">@("No Access")</MudSelectItem>
+                                <MudSelectItem Value="@("W1")">@("Read Only")</MudSelectItem>
+                                <MudSelectItem Value="@("W2")">@("Read & Write")</MudSelectItem>
+                            </MudSelect>
+                            <MudSelect T="string" Dense="true" @bind-Value="@(roleClaim["Produksi"])" Label="Produksi" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@("W0")">@("No Access")</MudSelectItem>
+                                <MudSelectItem Value="@("W1")">@("Read Only")</MudSelectItem>
+                                <MudSelectItem Value="@("W2")">@("Read & Write")</MudSelectItem>
+                            </MudSelect>
+                        </MudStack>
+                        <MudStack Class="flex-1" Spacing="0">
+                            <MudSelect T="string" Dense="true" @bind-Value="@(roleClaim["Penjualan"])" Label="Penjualan" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@("W0")">@("No Access")</MudSelectItem>
+                                <MudSelectItem Value="@("W1")">@("Read Only")</MudSelectItem>
+                                <MudSelectItem Value="@("W2")">@("Read & Write")</MudSelectItem>
+                            </MudSelect>
+                            <MudSelect T="string" Dense="true" @bind-Value="@(roleClaim["TransaksiLain"])" Label="Transaksi Lain" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@("W0")">@("No Access")</MudSelectItem>
+                                <MudSelectItem Value="@("W1")">@("Read Only")</MudSelectItem>
+                                <MudSelectItem Value="@("W2")">@("Read & Write")</MudSelectItem>
+                            </MudSelect>
+                        </MudStack>
+                    </MudStack>
+                    <MudText Class="mt-3" Typo="Typo.h6">Hak Akses Form Laporan</MudText>
+                    <MudStack Row="true" Justify="Justify.SpaceBetween">
+                        <MudSelect T="string" Dense="true" @bind-Value="@(roleClaim["Report"])" Label="Laporan" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem Value="@("W0")">@("No Access")</MudSelectItem>
+                            <MudSelectItem Value="@("W1")">@("Read")</MudSelectItem>
+                        </MudSelect>
+                    </MudStack>
+                </MudStack>
+            </MudForm>
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <div>
+            <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Help" @onmouseenter="@(() => popupTerbuka = true)" @onmouseleave="@(() => popupTerbuka = false)" />
+            <MudPopover Open="@popupTerbuka" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.BottomLeft" Fixed="true" Class="px-4">
+                <MudStack Spacing="0" Class="pb-2">
+                    <MudText Typo="Typo.button" Class="pt-2">Nama :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                    <div>▪ Tidak boleh sama dengan yang lain</div>
+                </MudStack>
+            </MudPopover>
+        </div>
+            @if (result is null)
+        {
+            <MudText Typo="Typo.caption" Color="Color.Error" @onclick="@(async e => await Refresh())" Style="cursor: pointer;">Terjadi kesalahan saat menyimpan data, harap periksa kembali dan refresh form.</MudText>
+        }
+        <MudSpacer />
+        <MudStack Row="true" Spacing="2">
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="@warna" OnClick="(async () => await Save())" Disabled="@(result is null)">Simpan</MudButton>
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Dark" OnClick="@(e => Cancel())">Batal</MudButton>
+        </MudStack>
+    </DialogActions>
+</MudDialog>
+
+@if (!string.IsNullOrEmpty(Role.Name))
+{
+    <NavigationLock ConfirmExternalNavigation="true" />
+}

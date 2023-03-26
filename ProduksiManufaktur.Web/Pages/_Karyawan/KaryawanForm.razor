@@ -1,0 +1,79 @@
+﻿@inherits KaryawanFormBase
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@icon" Class="mr-3 mb-n1" />
+            @judul
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudContainer Class="h-375">
+            <MudForm Model="Karyawan" @ref="form" Validation="@(validator.ValidateValue)">
+                <MudTextField T="string" OnlyValidateIfDirty="true" MaxLength="50" Immediate="true" For="(() => Karyawan.Nama)" Label="Nama Karyawan" @bind-Value="Karyawan.Nama" AutoFocus="true" />
+                <MudStack Row="true">
+                    <div class="flex-1">
+                        <MudTextField T="string" MaxLength="50" Label="Tempat Lahir" @bind-Value="Karyawan.TempatLahir" />
+                    </div>
+                    <div class="flex-1">
+                        <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="Karyawan.InputTanggalLahir" Label="Tanggal Lahir" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </MudStack>
+                <MudTextField T="string" MaxLength="150" Label="Alamat" @bind-Value="Karyawan.Alamat" />
+                <MudStack Row="true">
+                    <div class="flex-1">
+                        <MudTextField T="string" MaxLength="24" For="(() => Karyawan.Telepon)" Label="Telepon" @bind-Value="Karyawan.Telepon" />
+                    </div>
+                    <div class="flex-1">
+                        <MudTextField T="string" MaxLength="60" For="(() => Karyawan.Email)" Label="Email" @bind-Value="Karyawan.Email" InputType="InputType.Email" />
+                    </div>
+                </MudStack>
+                <MudStack Row="true">
+                    <div class="flex-1">
+                        <MudSelect T="int" @bind-Value="Karyawan.PekerjaanId" For="(() => Karyawan.PekerjaanId)" Dense="true" Label="Pekerjaan" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem Value="0">@("")</MudSelectItem>
+                            @foreach (var x in Pekerjaan)
+                            {
+                                <MudSelectItem Value="@(x.Key)">@x.Value</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                    <div class="flex-1">
+                        <MudNumericField Label="Upah" @bind-Value="Karyawan.Upah" Adornment="Adornment.Start" AdornmentText="Rp" Min="0" Max="1000000000" HideSpinButtons="true" Format="n0" />
+                    </div>
+                </MudStack>
+            </MudForm>
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <div>
+            <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Help" @onmouseenter="@(() => popupTerbuka = true)" @onmouseleave="@(() => popupTerbuka = false)" />
+            <MudPopover Open="@popupTerbuka" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.BottomLeft" Fixed="true" Class="px-4">
+                <MudStack Spacing="0" Class="pb-2">
+                    <MudText Typo="Typo.button" Class="pt-2">Nama :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                    <MudText Typo="Typo.button" Class="pt-2">Telepon :</MudText>
+                    <div>▪ Tidak boleh sama dengan yang lain</div>
+                    <MudText Typo="Typo.button" Class="pt-2">Email :</MudText>
+                    <div>▪ Tidak boleh sama dengan yang lain</div>
+                    <MudText Typo="Typo.button" Class="pt-2">Pekerjaan :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                </MudStack>
+            </MudPopover>
+        </div>
+        @if (result is null)
+        {
+            <MudText Typo="Typo.caption" Color="Color.Error" @onclick="@(async e => await Refresh())" Style="cursor: pointer;">Telah terjadi perukaryawan pada database yang menyebabkan konkurensi, harap refresh form ini sebelum disimpan!</MudText>
+        }
+        <MudSpacer />
+        <MudStack Row="true" Spacing="2">
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="@warna" OnClick="(async () => await Save())" Disabled="@(result is null)">Simpan</MudButton>
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Dark" OnClick="@(e => Cancel())">Batal</MudButton>
+        </MudStack>
+    </DialogActions>
+</MudDialog>
+
+@if (!string.IsNullOrEmpty(Karyawan.Nama) || !string.IsNullOrEmpty(Karyawan.Alamat) || !string.IsNullOrEmpty(Karyawan.Telepon) || !string.IsNullOrEmpty(Karyawan.Email) || !string.IsNullOrEmpty(Karyawan.TempatLahir) || Karyawan.PekerjaanId > 0 || Karyawan.Upah > 0)
+{
+    <NavigationLock ConfirmExternalNavigation="true" />
+}

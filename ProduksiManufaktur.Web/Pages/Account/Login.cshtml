@@ -1,0 +1,42 @@
+﻿@page
+@model ProduksiManufaktur.Web.Pages.Account.LoginModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewBag.Title = "Sign In";
+    Layout = "_Layout";
+}
+<div class="container">
+    <form method="post">
+        <input asp-for="Input.Email" class="" placeholder="Email" required autofocus />
+        <span asp-validation-for="Input.Email" class="validation-message"> </span>
+        <input asp-for="Input.Password" placeholder="Password" required />
+        <span asp-validation-for="Input.Password" class="validation-message"> </span>
+        <button type="submit">Masuk</button>
+    </form>
+    @if (Model.HasEmailNotConfirmedError)
+    {
+        <div class="error">
+            @ViewData["Pesan"]
+        </div>
+    }
+</div>
+<div id="form-footer">
+    <a href="/Account/Registrasi">Registrasi</a>
+    <a href="/Account/LupaPassword">Lupa Password</a>
+</div>
+
+<script>
+    // Cari elemen input dan pesan error
+    const input = document.getElementById("Input_Email");
+    const input2 = document.getElementById("Input_Password");
+    const errorMessage = document.getElementsByClassName("validation-message");
+
+    // Bersihkan pesan error saat input diketik
+    input.addEventListener("input", () => {
+        errorMessage.innerHTML = "";
+    });
+    // Bersihkan pesan error saat input diketik
+    input2.addEventListener("input", () => {
+        errorMessage.innerHTML = "";
+    });
+</script>

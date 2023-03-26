@@ -1,0 +1,3 @@
+﻿namespace ProduksiManufaktur.Api.wwwroot
+{
+}

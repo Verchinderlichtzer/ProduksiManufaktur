@@ -1,0 +1,138 @@
+﻿@page "/laporan"
+@inherits LaporanBase
+
+<PageTitle>Laporan - Produksi Manufaktur</PageTitle>
+    
+    <MudPaper Elevation="0" Class="laporan-container mud-theme-primary">
+        <MudPaper Elevation="0" Class="laporan-master">
+            <MudText Typo="Typo.h6" Class="text-center">Master</MudText>
+            <MudRadioGroup T="KeyValuePair<string, string>" SelectedOptionChanged="@(e => PilihLaporanKiri(e))">
+                <MudStack Class="h-100 flex-wrap" Spacing="0">
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("master-bahan"))" Color="Color.Primary" Dense="true">Bahan</MudRadio>
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("master-barang"))" Color="Color.Primary" Dense="true">Barang</MudRadio>
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("master-karyawan"))" Color="Color.Primary" Dense="true">Karyawan</MudRadio>
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("master-supplier"))" Color="Color.Primary" Dense="true">Supplier</MudRadio>
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("master-customer"))" Color="Color.Primary" Dense="true">Customer</MudRadio>
+                </MudStack>
+            </MudRadioGroup>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="laporan-transaksi">
+            <MudText Typo="Typo.h6" Class="text-center">Transaksi</MudText>
+            <MudRadioGroup T="KeyValuePair<string, string>" SelectedOptionChanged="@(e => PilihLaporanKiri(e))">
+                <MudStack Class="h-100 flex-wrap" Spacing="0">
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("transaksi-pembelian"))" Color="Color.Primary" Dense="true">Pembelian</MudRadio>
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("transaksi-penjualan"))" Color="Color.Primary" Dense="true">Penjualan</MudRadio>
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("transaksi-produksi"))" Color="Color.Primary" Dense="true">Produksi</MudRadio>
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("transaksi-transaksi-lain"))" Color="Color.Primary" Dense="true">Transaksi Lain</MudRadio>
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("transaksi-kas"))" Color="Color.Primary" Dense="true">Kas</MudRadio>
+                </MudStack>
+            </MudRadioGroup>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="laporan-grafik">
+            <MudText Typo="Typo.h6" Class="text-center">Grafik</MudText>
+            <MudRadioGroup T="KeyValuePair<string, string>" SelectedOptionChanged="@(e => PilihLaporanKiri(e))">
+                <MudStack Class="h-75 flex-wrap" Spacing="0">
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("grafik-batang"))" Color="Color.Primary" Dense="true">Diagram Batang</MudRadio>
+                    <MudRadio Option="@(daftarLaporanKiri.GetKvp("grafik-garis"))" Color="Color.Primary" Dense="true">Diagram Garis</MudRadio>
+                </MudStack>
+            </MudRadioGroup>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="laporan-filter">
+            <MudText Typo="Typo.h6" Class="text-center">Filter</MudText>
+            <MudStack Spacing="1">
+                <div class="px-5">
+                    <MudDateRangePicker Label="Periodik" PickerVariant="PickerVariant.Dialog" DateRangeChanged="@(e => {tanggal = $"{e.Start?.Date:dd-MM-yyyy}.{e.End?.Date:dd-MM-yyyy}"; PilihPeriodik(e);})" Disabled="!izinTanggal.Contains(laporan)" />
+                </div>
+                <div class="px-5">
+                    <MudDatePicker Label="Bulanan" PickerVariant="PickerVariant.Dialog" DateChanged="@(e => {tanggal = $"{e?.Date:MMMM-yyyy}"; PilihBulanan(e);})" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MMMM yyyy" Disabled="!izinTanggal.Contains(laporan)" />
+                </div>
+                <div class="px-5">
+                    <MudDatePicker Label="Tahunan" PickerVariant="PickerVariant.Dialog" Date="tahun" DateChanged="@(e => {tahun = e; tanggal = $"{e?.Year}"; PilihTahunan(e);})" OpenTo="OpenTo.Year" FixMonth="1" FixDay="1" DateFormat="yyyy" Disabled="!izinTahunan.Contains(laporan)" />
+                </div>
+                <div class="px-5">
+                    <MudText Typo="Typo.subtitle1" Class="text-center">Metode Bayar</MudText>
+                    <MudRadioGroup T="string" SelectedOption="metodeBayar" SelectedOptionChanged="@(e => {metodeBayar = e; PilihMetodeBayar(e);})">
+                        <MudStack Class="h-75" Spacing="0">
+                            <MudRadio Disabled="!izinMetodeBayarDanStatus.Contains(laporan)" Option="@("tunai")" Color="Color.Primary" Dense="true">Tunai</MudRadio>
+                            <MudRadio Disabled="!izinMetodeBayarDanStatus.Contains(laporan)" Option="@("kredit")" Color="Color.Primary" Dense="true">Kredit</MudRadio>
+                        </MudStack>
+                    </MudRadioGroup>
+                </div>
+                <div class="px-5">
+                    <MudText Typo="Typo.subtitle1" Class="text-center">Status</MudText>
+                    <MudRadioGroup T="string" SelectedOption="status" SelectedOptionChanged="@(e => {status = e; PilihStatus(e);})">
+                        <MudStack Class="h-75" Spacing="0">
+                            <MudRadio Disabled="@(!izinMetodeBayarDanStatus.Contains(laporan) || metodeBayar == "tunai")" Option="@("lunas")" Color="Color.Primary" Dense="true">Lunas</MudRadio>
+                            <MudRadio Disabled="@(!izinMetodeBayarDanStatus.Contains(laporan) || metodeBayar == "tunai")" Option="@("belumLunas")" Color="Color.Primary" Dense="true">Belum Lunas</MudRadio>
+                        </MudStack>
+                    </MudRadioGroup>
+                </div>
+            </MudStack>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="laporan-entitas">
+            <MudText Typo="Typo.h6" Class="text-center">Entitas</MudText>
+            <MudStack Row="true" Spacing="1">
+                <div class="flex-4">
+                    <MudSelect T="KeyValuePair<string, string>" Dense="true" Value="jenisEntitas" ValueChanged="@(async e => {jenisEntitas = e; await PilihEntitas(e);})" Label="Entitas" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("-"))">-</MudSelectItem>
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("entitas-faktur-pembelian"))">Faktur Pembelian</MudSelectItem>
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("entitas-retur-pembelian"))">Retur Pembelian</MudSelectItem>
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("entitas-faktur-penjualan"))">Faktur Penjualan</MudSelectItem>
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("entitas-retur-penjualan"))">Retur Penjualan</MudSelectItem>
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("entitas-produksi"))">Produksi</MudSelectItem>
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("entitas-formulasi"))">Formulasi</MudSelectItem>
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("entitas-penggajian"))">Penggajian</MudSelectItem>
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("entitas-stok-bahan"))">Stok Bahan</MudSelectItem>
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("entitas-stok-barang"))">Stok Barang</MudSelectItem>
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("entitas-supplier"))">Supplier</MudSelectItem>
+                        <MudSelectItem Value="@(daftarLaporanKanan.GetKvp("entitas-customer"))">Customer</MudSelectItem>
+                    </MudSelect>
+                </div>
+                <div class="flex-5">
+                    <MudTextField Immediate="true" @bind-Value="dicari" Placeholder="Cari item..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
+                </div>
+            </MudStack>
+            <div class="h-325 scroll-y" style="position: relative;">
+                @if (loaded is false)
+                {
+                    <MudProgressCircular Indeterminate="true" Class="spinner" />
+                }
+                else if (loaded is true)
+                {
+                    <MudDataGrid T="EntitasDto" Items="listModel" Elevation="0" Dense="true" Hover="true" Bordered="true" QuickFilter="FilterSearch" RowClick="@(e => PilihItem(e.Item))" ShowColumnOptions="false">
+                        <Columns>
+                            <Column T="EntitasDto" Field="Nama" CellStyle="cursor:pointer" Title="@(jenisEntitas.Key != "-" ? $"Daftar {jenisEntitas.Value}" : string.Empty)" HeaderStyle="text-align:center" />
+                        </Columns>
+                    </MudDataGrid>
+                }
+            </div>
+        </MudPaper>
+
+        <MudPaper Elevation="0" Class="laporan-aksi">
+            <MudStack Justify="Justify.SpaceBetween" Spacing="0" Style="min-height:85px">
+                <MudText Typo="Typo.body1" Class="text-center">@filterText</MudText>
+                <MudStack Row="true" Class="px-2" Spacing="2">
+                    <MudButton Variant="Variant.Filled" Class="flex-1" Color="Color.Info" Size="Size.Small" Disabled="@(string.IsNullOrEmpty(laporan) || laporan == "-")" OnClick="TampilLaporan">
+                        Tampil Laporan
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled" Class="flex-1" Color="Color.Error" Size="Size.Small" OnClick="BersihkanFilter">
+                        Bersihkan Filter
+                    </MudButton>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+    </MudPaper>
+
+<MudMessageBox @ref="deleteDialog" Title="Konfirmasi Hapus">
+    <MessageContent>
+        <MudPaper Elevation="0" MinWidth="400px">
+            @pesanHapus
+        </MudPaper>
+    </MessageContent>
+    <NoButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small">Ya</MudButton>
+    </NoButton>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1 ml-2" Color="Color.Dark" Size="Size.Small">Tidak</MudButton>
+    </YesButton>
+</MudMessageBox>

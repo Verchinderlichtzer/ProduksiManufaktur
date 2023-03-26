@@ -1,0 +1,222 @@
+﻿@page "/"
+@inherits IndexBase
+
+<PageTitle>Home - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudPaper Elevation="0" Class="home-container">
+        <MudPaper Elevation="0" Class="home-grafik px-3">
+            <MudStack Row="true" Spacing="0">
+                <div class="wp-50">
+                    <MudPaper Elevation="0" Class="hp-10">
+                        <MudText Typo="Typo.h6" Class="text-center">Grafik</MudText>
+                    </MudPaper>
+                    <MudPaper Elevation="0" Class="hp-10 mb-1">
+                        <MudStack Row="true" Spacing="1">
+                            <div class="flex-3">
+                                <MudSelect T="int" Dense="true" Value="grafik" ValueChanged="@(async e => {grafik = e; await PilihPeriodeGrafik(e);})" Label="Periode" AnchorOrigin="Origin.BottomCenter">
+                                    <MudSelectItem Value="0">10 Hari Terakhir</MudSelectItem>
+                                    <MudSelectItem Value="1">10 Minggu Terakhir</MudSelectItem>
+                                    <MudSelectItem Value="2">Bulanan (Tahun Ini)</MudSelectItem>
+                                    <MudSelectItem Value="3">Tahunan (10 Tahun Terakhir)</MudSelectItem>
+                                </MudSelect>
+                            </div>
+                            <div class="flex-2">
+                                <MudSelect T="int" Dense="true" Value="intervalY" ValueChanged="@(async e => { intervalY = e; await TerapkanGrafik(); })" Label="Interval Y" AnchorOrigin="Origin.BottomCenter">
+                                    <MudSelectItem Value="10000">10K</MudSelectItem>
+                                    <MudSelectItem Value="20000">20K</MudSelectItem>
+                                    <MudSelectItem Value="50000">50K</MudSelectItem>
+                                    <MudSelectItem Value="100000">100K</MudSelectItem>
+                                    <MudSelectItem Value="200000">200K</MudSelectItem>
+                                    <MudSelectItem Value="500000">500K</MudSelectItem>
+                                    <MudSelectItem Value="1000000">1M</MudSelectItem>
+                                    <MudSelectItem Value="2000000">2M</MudSelectItem>
+                                    <MudSelectItem Value="5000000">5M</MudSelectItem>
+                                    <MudSelectItem Value="10000000">10M</MudSelectItem>
+                                    <MudSelectItem Value="20000000">20M</MudSelectItem>
+                                    <MudSelectItem Value="50000000">50M</MudSelectItem>
+                                    <MudSelectItem Value="100000000">100M</MudSelectItem>
+                                </MudSelect>
+                            </div>
+                        </MudStack>
+                    </MudPaper>
+                    <MudPaper Elevation="0" Class="hp-80">
+                        <MudChart ChartOptions="@(new ChartOptions(){YAxisTicks=intervalY,YAxisFormat=yAxisFormat})" Class="ml-4" ChartType="ChartType.Line" ChartSeries="@series" XAxisLabels="@xAxisLabels" Width="100%" />
+                    </MudPaper>
+                </div>
+                <div class="wp-50">
+                    <MudPaper Elevation="0" Class="hp-10">
+                        <MudText Typo="Typo.h6" Class="text-center">Barang Populer (2 Minggu Terakhir)</MudText>
+                    </MudPaper>
+                    <MudPaper Elevation="0" Class="hp-90">
+                        <MudChart ChartType="ChartType.Donut" InputData="@dataBarangPopuler.ToArray()" InputLabels="@labelBarangPopuler.ToArray()" Width="55%" />
+                        @if (!listBarangPopuler.Any())
+                        {
+                            <MudText Typo="Typo.subtitle1" Color="Color.Error" Class="text-center mt-n8">Tidak ada barang yang terjual</MudText>
+                        }
+                    </MudPaper>
+                </div>
+            </MudStack>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="home-bahan-beli">
+            <MudPaper Elevation="0" Class="hp-10">
+                <MudText Typo="Typo.h6" Class="text-center">Pembelian Bahan</MudText>
+            </MudPaper>
+            <MudPaper Elevation="0" Class="hp-90">
+                <MudDataGrid Items="listBahanBeli" Elevation="0" FixedHeader="true" Height="270px" Dense="true" Bordered="true" ShowColumnOptions="false">
+                    <Columns>
+                        <Column T="JumlahItemDto" Field="Nama" />
+                        <Column T="JumlahItemDto" Field="Jumlah" HeaderStyle="width:140px" CellStyle="text-align:center">
+                            <CellTemplate>
+                                @context.Item.Jumlah.ToString("g0") @context.Item.Satuan
+                            </CellTemplate>
+                        </Column>
+                        <Column T="JumlahItemDto" Field="Total" Title="Pengeluaran" HeaderStyle="width:1px" CellStyle="text-align:right">
+                            <CellTemplate>
+                                @context.Item.Total.ToString("n0")
+                            </CellTemplate>
+                        </Column>
+                    </Columns>
+                </MudDataGrid>
+            </MudPaper>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="home-barang-jual">
+            <MudPaper Elevation="0" Class="hp-10">
+                <MudText Typo="Typo.h6" Class="text-center">Penjualan Barang</MudText>
+            </MudPaper>
+            <MudPaper Elevation="0" Class="hp-90">
+                <MudDataGrid Items="listBarangJual" Elevation="0" FixedHeader="true" Height="270px" Dense="true" Bordered="true" ShowColumnOptions="false">
+                    <Columns>
+                        <Column T="JumlahItemDto" Field="Nama" />
+                        <Column T="JumlahItemDto" Field="Jumlah" HeaderStyle="width:140px" CellStyle="text-align:center">
+                            <CellTemplate>
+                                @context.Item.Jumlah.ToString("g0") @context.Item.Satuan
+                            </CellTemplate>
+                        </Column>
+                        <Column T="JumlahItemDto" Field="Total" Title="Pendapatan" HeaderStyle="width:1px" CellStyle="text-align:right">
+                            <CellTemplate>
+                                @context.Item.Total.ToString("n0")
+                            </CellTemplate>
+                        </Column>
+                    </Columns>
+                </MudDataGrid>
+            </MudPaper>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="home-bahan-pakai">
+            <MudPaper Elevation="0" Class="hp-10">
+                <MudText Typo="Typo.h6" Class="text-center">Bahan Terpakai</MudText>
+            </MudPaper>
+            <MudPaper Elevation="0" Class="hp-90">
+                <MudDataGrid Items="listBahanPakai" Elevation="0" FixedHeader="true" Height="270px" Dense="true" Bordered="true" ShowColumnOptions="false">
+                    <Columns>
+                        <Column T="JumlahItemDto" Field="Nama" />
+                        <Column T="JumlahItemDto" Field="Jumlah" HeaderStyle="width:140px" CellStyle="text-align:center">
+                            <CellTemplate>
+                                @context.Item.Jumlah.ToString("g0") @context.Item.Satuan
+                            </CellTemplate>
+                        </Column>
+                    </Columns>
+                </MudDataGrid>
+            </MudPaper>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="home-barang-produksi">
+            <MudPaper Elevation="0" Class="hp-10">
+                <MudText Typo="Typo.h6" Class="text-center">Barang Diproduksi</MudText>
+            </MudPaper>
+            <MudPaper Elevation="0" Class="hp-90">
+                <MudDataGrid Items="listBarangProduksi" Elevation="0" FixedHeader="true" Height="270px" Dense="true" Bordered="true" ShowColumnOptions="false">
+                    <Columns>
+                        <Column T="JumlahItemDto" Field="Nama" />
+                        <Column T="JumlahItemDto" Field="Jumlah" HeaderStyle="width:140px" CellStyle="text-align:center">
+                            <CellTemplate>
+                                @context.Item.Jumlah.ToString("g0") @context.Item.Satuan
+                            </CellTemplate>
+                        </Column>
+                    </Columns>
+                </MudDataGrid>
+            </MudPaper>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="home-stok-bahan-minim">
+            <MudPaper Elevation="0" Class="hp-10">
+                <MudText Typo="Typo.h6" Class="text-center">Stok Bahan Minim</MudText>
+            </MudPaper>
+            <MudPaper Elevation="0" Class="hp-90">
+            <MudDataGrid Items="listStokBahanMinim" Elevation="0" FixedHeader="true" Height="270px" Dense="true" Bordered="true" ShowColumnOptions="false">
+                <Columns>
+                    <Column T="Bahan" Field="Nama" />
+                    <Column T="Bahan" Field="Stok" HeaderStyle="width:140px" CellStyle="text-align:center">
+                        <CellTemplate>
+                            @($"{context.Item.Stok:g0}/{context.Item.StokMinimal:g0} {context.Item.SatuanProduksi}")
+                        </CellTemplate>
+                    </Column>
+                </Columns>
+            </MudDataGrid>
+            </MudPaper>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="home-stok-barang-minim">
+            <MudPaper Elevation="0" Class="hp-10">
+                <MudText Typo="Typo.h6" Class="text-center">Stok Barang Minim</MudText>
+            </MudPaper>
+            <MudPaper Elevation="0" Class="hp-90">
+                <MudDataGrid Items="listStokBarangMinim" Elevation="0" FixedHeader="true" Height="270px" Dense="true" Bordered="true" ShowColumnOptions="false">
+                    <Columns>
+                        <Column T="Barang" Field="Nama" />
+                        <Column T="Barang" Field="Stok" HeaderStyle="width:140px" CellStyle="text-align:center">
+                            <CellTemplate>
+                                @($"{context.Item.Stok:g0}/{context.Item.StokMinimal:g0} {context.Item.SatuanProduksi}")
+                            </CellTemplate>
+                        </Column>
+                    </Columns>
+                </MudDataGrid>
+            </MudPaper>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="home-utang">
+            <MudPaper Elevation="0" Class="hp-10">
+                <MudText Typo="Typo.h6" Class="text-center">Daftar Utang</MudText>
+            </MudPaper>
+            <MudPaper Elevation="0" Class="hp-90">
+                <MudDataGrid Items="listUtang" Elevation="0" FixedHeader="true" Height="270px" Dense="true" Bordered="true" ShowColumnOptions="false">
+                    <Columns>
+                        <Column T="Pembelian" Field="Id" HeaderStyle="width:133px" />
+                        <Column T="Pembelian" Field="Sisa" Title="Kurang" CellStyle="text-align:right">
+                            <CellTemplate>
+                                @context.Item.Sisa.ToString("n0")
+                            </CellTemplate>
+                        </Column>
+                        <Column T="Pembelian" Field="JatuhTempo" Title="Jatuh Tempo">
+                            <CellTemplate>
+                                @context.Item.JatuhTempo?.ToString("dd/MM/yyyy") @(context.Item.HariJatuhTempo > 0 ? $"({context.Item.HariJatuhTempo} hari lagi)" : context.Item.HariJatuhTempo == 0 ? "(hari ini)" : $"({Math.Abs(context.Item.HariJatuhTempo)} hari yang lalu)")
+                            </CellTemplate>
+                        </Column>
+                    </Columns>
+                </MudDataGrid>
+            </MudPaper>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="home-piutang">
+            <MudPaper Elevation="0" Class="hp-10">
+                <MudText Typo="Typo.h6" Class="text-center">Daftar Piutang</MudText>
+            </MudPaper>
+            <MudPaper Elevation="0" Class="hp-90">
+                <MudDataGrid Items="listPiutang" Elevation="0" FixedHeader="true" Height="270px" Dense="true" Bordered="true" ShowColumnOptions="false">
+                    <Columns>
+                        <Column T="Penjualan" Field="Id" HeaderStyle="width:133px" />
+                        <Column T="Penjualan" Field="Sisa" Title="Kurang" CellStyle="text-align:right">
+                            <CellTemplate>
+                                @context.Item.Sisa.ToString("n0")
+                            </CellTemplate>
+                        </Column>
+                        <Column T="Penjualan" Field="JatuhTempo" Title="Jatuh Tempo">
+                            <CellTemplate>
+                                @context.Item.JatuhTempo?.ToString("dd/MM/yyyy") @(context.Item.HariJatuhTempo > 0 ? $"({context.Item.HariJatuhTempo} hari lagi)" : context.Item.HariJatuhTempo == 0 ? "(hari ini)" : $"({Math.Abs(context.Item.HariJatuhTempo)} hari yang lalu)")
+                            </CellTemplate>
+                        </Column>
+                    </Columns>
+                </MudDataGrid>
+            </MudPaper>
+        </MudPaper>
+    </MudPaper>
+}

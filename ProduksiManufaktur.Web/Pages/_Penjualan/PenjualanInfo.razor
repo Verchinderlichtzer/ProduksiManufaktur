@@ -1,0 +1,135 @@
+﻿@page "/penjualan/info/{id}"
+@inherits PenjualanInfoBase
+
+<PageTitle>Info @Id - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudText Typo="Typo.h6">@judul</MudText>
+    <MudStack Spacing="1">
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Nama Customer</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @penjualan.Customer!.Nama</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Tanggal</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @penjualan.Tanggal.ToString("dd/MM/yyyy hh.mm tt")</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Subtotal</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @penjualan.Subtotal.ToString("c0")</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">PPN</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @penjualan.PPN %</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Grand Total</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @penjualan.GrandTotal.ToString("c0")</MudText>
+            </div>
+        </MudStack>
+        @if (penjualan.Status == "Belum Lunas")
+        {
+            <MudStack Row="true" Spacing="0">
+                <div class="w-125">
+                    <MudText Typo="Typo.body1">Terbayar</MudText>
+                </div>
+                <div class="flex-1">
+                    <MudText Typo="Typo.body1">: @penjualan.Terbayar.ToString("c0")</MudText>
+                </div>
+            </MudStack>
+            <MudStack Row="true" Spacing="0">
+                <div class="w-125">
+                    <MudText Typo="Typo.body1">Sisa</MudText>
+                </div>
+                <div class="flex-1">
+                    <MudText Typo="Typo.body1">: @penjualan.Sisa.ToString("c0")</MudText>
+                </div>
+            </MudStack>
+        }
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Metode Bayar</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @penjualan.MetodeBayar</MudText>
+            </div>
+        </MudStack>
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Status</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @penjualan.Status</MudText>
+            </div>
+        </MudStack>
+        @if (penjualan.MetodeBayar == "Kredit")
+        {
+            <MudStack Row="true" Spacing="0">
+                <div class="w-125">
+                    <MudText Typo="Typo.body1">Jatuh Tempo</MudText>
+                </div>
+                <div class="flex-1">
+                    <MudText Typo="Typo.body1">: @($"{penjualan.JatuhTempo?.ToString("dd/MM/yyyy")} ({penjualan.HariJatuhTempo} hari)")</MudText>
+                    </div>
+                </MudStack>
+        }
+        <MudStack Row="true" Spacing="0">
+            <div class="w-125">
+                <MudText Typo="Typo.body1">Keterangan</MudText>
+            </div>
+            <div class="flex-1">
+                <MudText Typo="Typo.body1">: @penjualan.Keterangan</MudText>
+            </div>
+        </MudStack>
+        <MudDataGrid Class="mt-3" Items="penjualan.PenjualanDetail" Elevation="2" Dense="true" Bordered="true" ShowColumnOptions="false">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Barang yang dijual</MudText>
+            </ToolBarContent>
+            <Columns>
+                <Column T="PenjualanDetail" Field="BarangSatuan" Title="Nama Barang">
+                    <CellTemplate>
+                        @context.Item.BarangSatuan!.Barang!.Nama
+                    </CellTemplate>
+                </Column>
+                <Column T="PenjualanDetail" Field="Harga" HeaderStyle="width:125px" CellStyle="text-align:right">
+                    <CellTemplate>
+                        @context.Item.Harga.ToString("n0")
+                    </CellTemplate>
+                </Column>
+                <Column T="PenjualanDetail" Field="Jumlah" HeaderStyle="width:180px" CellStyle="text-align:center">
+                    <CellTemplate>
+                        @context.Item.Jumlah.ToString("g0") @(string.IsNullOrEmpty(context.Item.BarangSatuan!.Ukuran) ? context.Item.BarangSatuan!.Nama : $"{context.Item.BarangSatuan!.Nama} ({context.Item.BarangSatuan!.Ukuran})")
+                    </CellTemplate>
+                </Column>
+                <Column T="PenjualanDetail" Field="Total" HeaderStyle="width:125px" CellStyle="text-align:right">
+                    <CellTemplate>
+                        @context.Item.Total.ToString("n0")
+                    </CellTemplate>
+                </Column>
+            </Columns>
+        </MudDataGrid>
+    </MudStack>
+}

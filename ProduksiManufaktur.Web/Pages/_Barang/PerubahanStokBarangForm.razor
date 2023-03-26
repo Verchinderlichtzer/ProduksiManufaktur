@@ -1,0 +1,65 @@
+﻿@inherits PerubahanStokBarangFormBase
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@icon" Class="mr-3 mb-n1" />
+            @judul
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudContainer Class="h-375">
+            <MudForm Model="PerubahanStokBarang" @ref="form" Validation="@(validator.ValidateValue)">
+                <MudStack Row="true" Class="w-250">
+                    <div class="flex-5">
+                        <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="PerubahanStokBarang.InputTanggal" Label="Tanggal" DateFormat="dd/MM/yyyy" />
+                    </div>
+                    <div class="flex-3">
+                        <MudTimePicker PickerVariant="PickerVariant.Dialog" @bind-Time="PerubahanStokBarang.InputWaktu" Label="Waktu" />
+                    </div>
+                </MudStack>
+                <div class="pt-4">
+                    <MudText Typo="Typo.caption">Jenis Perubahan Stok :</MudText>
+                    <MudRadioGroup T="string" Class="ml-1" For="(() => PerubahanStokBarang.Jenis)" SelectedOption="PerubahanStokBarang.Jenis" SelectedOptionChanged="@(e => PilihJenis(e))">
+                        <MudRadio Color="Color.Error" Dense="true" UnCheckedColor="Color.Default" Option="@("Pengurangan")">Pengurangan</MudRadio>
+                        <MudRadio Color="Color.Success" Dense="true" UnCheckedColor="Color.Default" Option="@("Penambahan")">Penambahan</MudRadio>
+                    </MudRadioGroup>
+                </div>
+                <MudAutocomplete T="Barang" For="(() => PerubahanStokBarang.Barang)" Dense="true" Label="Barang" Value="PerubahanStokBarang.Barang" ValueChanged="@(e => PilihBarang(e))" OnlyValidateIfDirty="true" Immediate="true" CoerceText="true" SearchFunc="@(async e => await CariBarang(e))" AutoFocus="true" ToStringFunc="@(x => x is null ? null : x.Nama)" MaxItems="80" />
+                <MudNumericField T="decimal" Value="PerubahanStokBarang.Jumlah" ValueChanged="@(e => PerubahanStokBarang.Jumlah = decimal.Round(e, 2))" Label="Jumlah" Min="0.01m" Max="@(PerubahanStokBarang.Jenis == "Penambahan" ? 1000000 : jumlahMax)" HideSpinButtons="true" Format="g0" Adornment="Adornment.End" AdornmentText="@adornmentJumlah" Disabled="@(string.IsNullOrEmpty(PerubahanStokBarang.Jenis) || string.IsNullOrEmpty(PerubahanStokBarang.BarangId))" />
+                <MudTextField T="string" MaxLength="200" Label="Keterangan" @bind-Value="PerubahanStokBarang.Keterangan" />
+            </MudForm>
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <div>
+            <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Help" @onmouseenter="@(() => popupTerbuka = true)" @onmouseleave="@(() => popupTerbuka = false)" />
+            <MudPopover Open="@popupTerbuka" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.BottomLeft" Fixed="true" Class="px-4">
+                <MudStack Spacing="0" Class="pb-2">
+                    <MudText Typo="Typo.button" Class="pt-2">Jenis :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                    <MudText Typo="Typo.button" Class="pt-2">Barang :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                    <MudText Typo="Typo.button" Class="pt-2">Jumlah :</MudText>
+                    <div>▪ Tidak boleh kosong</div>
+                    <div>▪ Tidak boleh melebihi 1Jt (untuk jenis penambahan)</div>
+                    <div>▪ Tidak boleh melebihi stok saat ini (untuk jenis pengurangan)</div>
+                </MudStack>
+            </MudPopover>
+        </div>
+        @if (result is null)
+        {
+            <MudText Typo="Typo.caption" Color="Color.Error" @onclick="@(async e => await Refresh())" Style="cursor: pointer;">Terjadi kesalahan saat menyimpan data, harap periksa kembali dan refresh form.</MudText>
+        }
+        <MudSpacer />
+        <MudStack Row="true" Spacing="2">
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="@warna" OnClick="(async () => await Save())" Disabled="@(result is null || PerubahanStokBarang.Jumlah <= 0 || (PerubahanStokBarang.Jenis == "Pengurangan" && jumlahMax <= 0))">Simpan</MudButton>
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Dark" OnClick="@(e => Cancel())">Batal</MudButton>
+        </MudStack>
+    </DialogActions>
+</MudDialog>
+
+@if (!string.IsNullOrEmpty(PerubahanStokBarang.Jenis) || !string.IsNullOrEmpty(PerubahanStokBarang.BarangId) || !string.IsNullOrEmpty(PerubahanStokBarang.Keterangan) || PerubahanStokBarang.Jumlah > 0)
+{
+    <NavigationLock ConfirmExternalNavigation="true" />
+}

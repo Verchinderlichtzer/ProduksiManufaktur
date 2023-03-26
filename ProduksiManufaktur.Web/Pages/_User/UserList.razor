@@ -1,0 +1,71 @@
+﻿@page "/user"
+@inherits UserListBase
+
+<PageTitle>User - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudDataGrid Items="listUser" Elevation="2" Dense="true" Bordered="true" QuickFilter="FilterSearch" ShowColumnOptions="false">
+        <ToolBarContent>
+            <MudStack Row="true" Spacing="2">
+                <MudText Typo="Typo.h5">Daftar User</MudText>
+            </MudStack>
+            <MudSpacer />
+            <MudTextField Immediate="true" @bind-Value="dicari" Placeholder="Cari user..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        </ToolBarContent>
+        <Columns>
+            <Column T="User" Field="Email" HeaderStyle="width:1px" />
+            <Column T="User" Field="PhoneNumber" Title="Telepon" />
+            <Column T="User" Field="Alamat" />
+            <Column T="User" Field="TempatLahir" Title="TTL" HeaderStyle="width:1px">
+                <CellTemplate>
+                    @($"{context.Item.TempatLahir}, {context.Item.TanggalLahir:dd/MM/yyyy}")
+                </CellTemplate>
+            </Column>
+            <Column T="User" Field="Roles" HeaderStyle="width:100px" />
+            <Column T="User" Field="EmailConfirmed" Title="Email Terkonfirmasi" HeaderStyle="width:1px">
+                <CellTemplate>
+                    <MudText Color="@(context.Item.EmailConfirmed ? Color.Inherit : Color.Error)">
+                        @(context.Item.EmailConfirmed ? "Sudah" : "Belum")
+                    </MudText>
+                </CellTemplate>
+            </Column>
+            <AuthorizeView Policy="AkunWrite">
+                <Authorized Context="konteks">
+                    <Column T="User" HeaderStyle="width:1px" Sortable="false">
+                        <CellTemplate>
+                            <MudStack Row="true" Spacing="1">
+                                @if (context.Item.EmailConfirmed)
+                                {
+                                    <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Accessibility" Color="Color.Info" OnClick="@(async e => await FormUserClaim(context.Item))" />
+                                    <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" OnClick="@(async e => await Form(context.Item))" />
+                                }
+                                <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(async e => await Hapus(context.Item))" />
+                            </MudStack>
+                        </CellTemplate>
+                    </Column>
+                </Authorized>
+            </AuthorizeView>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="User" RowsPerPageString="Jumlah baris per halaman" InfoFormat="Menampilkan {first_item} - {last_item} dari {all_items} user" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+<MudMessageBox @ref="deleteDialog" Title="Konfirmasi Hapus">
+    <MessageContent>
+        <MudPaper Elevation="0" MinWidth="300px" Class="mx-5">
+            @pesanHapus
+        </MudPaper>
+    </MessageContent>
+    <NoButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Error" Size="Size.Small">Ya</MudButton>
+    </NoButton>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Dark" Size="Size.Small">Tidak</MudButton>
+    </YesButton>
+</MudMessageBox>

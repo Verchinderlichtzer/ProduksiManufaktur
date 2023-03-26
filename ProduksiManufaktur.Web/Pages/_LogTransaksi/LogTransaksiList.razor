@@ -1,0 +1,59 @@
+﻿@page "/log-transaksi"
+@inherits LogTransaksiListBase
+
+<PageTitle>Log Transaksi - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudDataGrid Items="listLogTransaksi" Elevation="2" Dense="true" Bordered="true" QuickFilter="FilterSearch" ShowColumnOptions="false">
+        <ToolBarContent>
+            <MudStack Row="true" Spacing="2">
+                <MudText Typo="Typo.h5">Daftar Log Transaksi</MudText>
+                <AuthorizeView Roles="Admin">
+                    <Authorized Context="konteks">
+                        <MudTooltip Text="Hapus semua log" Arrow="true" Placement="Placement.Bottom">
+                            <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.DeleteForever" Color="Color.Error" OnClick="@(async e => await Hapus())" />
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+            <MudSpacer />
+            <MudTextField Immediate="true" @bind-Value="dicari" Placeholder="Cari logTransaksi..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        </ToolBarContent>
+        <Columns>
+            <Column T="LogTransaksi" Field="Tanggal" HeaderStyle="width:145px">
+                <CellTemplate>
+                    @context.Item.Tanggal.ToString("dd/MM/yyyy HH.mm")
+                </CellTemplate>
+            </Column>
+            <Column T="LogTransaksi" Field="Entitas" HeaderStyle="width:130px" />
+            <Column T="LogTransaksi" Field="EntitasId" Title="ID Entitas" />
+            <Column T="LogTransaksi" Field="Keterangan" HeaderStyle="width:1px" />
+            <Column T="LogTransaksi" Field="User" Title="Email User" HeaderStyle="width:200px" SortBy="@(e => e.User!.Email)">
+                <CellTemplate>
+                    @context.Item.User!.Email
+                </CellTemplate>
+            </Column>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="LogTransaksi" RowsPerPageString="Jumlah baris per halaman" InfoFormat="Menampilkan {first_item} - {last_item} dari {all_items} log" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+<MudMessageBox @ref="deleteDialog" Title="Konfirmasi Hapus">
+    <MessageContent>
+        <MudPaper Elevation="0" MinWidth="300px" Class="mx-5">
+            Hapus semua log?
+        </MudPaper>
+    </MessageContent>
+    <NoButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Error" Size="Size.Small">Ya</MudButton>
+    </NoButton>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Dark" Size="Size.Small">Tidak</MudButton>
+    </YesButton>
+</MudMessageBox>

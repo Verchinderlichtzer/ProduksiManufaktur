@@ -1,0 +1,143 @@
+﻿@page "/pembelian/transaksi/{id}"
+@inherits TransaksiPembelianFormBase
+
+<PageTitle>Transaksi Pembelian @Id - Produksi Manufaktur</PageTitle>
+@if (loaded is false)
+{
+    <MudProgressCircular Indeterminate="true" Class="spinner" />
+}
+else
+{
+    <MudPaper Elevation="0" Class="mt-3 pa-4">
+        <MudStack Row="true">
+            <div class="flex-2">
+                <MudText Typo="Typo.h6">Transaksi Nomor @Id</MudText>
+                <MudForm Model="transaksiPembelian" @ref="form" Validation="@(validator.ValidateValue)">
+                    <MudStack Row="true">
+                        <div class="flex-1">
+                            <MudTextField T="string" ReadOnly="true" tabindex="-1" Label="ID Pembelian" Value="Id" />
+                        </div>
+                        <div class="flex-1">
+                            <MudTextField Label="Tanggal" Value="@(pembelian.Tanggal.ToString("dd/MM/yyyy"))" ReadOnly="true" tabindex="-1" />
+                        </div>
+                    </MudStack>
+                    <MudStack Row="true">
+                        <div class="flex-1">
+                            <MudNumericField Label="Grand Total" Value="pembelian.GrandTotal" Adornment="Adornment.Start" AdornmentText="Rp" ReadOnly="true" tabindex="-1" Format="n0" HideSpinButtons="true" />
+                        </div>
+                        <div class="flex-1">
+                            <MudNumericField Label="Terbayar" Value="pembelian.Terbayar" Adornment="Adornment.Start" AdornmentText="Rp" ReadOnly="true" tabindex="-1" Format="n0" HideSpinButtons="true" />
+                        </div>
+                    </MudStack>
+                    <MudStack Row="true" Class="mb-6">
+                        <div class="flex-1">
+                            <MudNumericField Label="Sisa" Value="pembelian.Sisa" Adornment="Adornment.Start" AdornmentText="Rp" ReadOnly="true" tabindex="-1" Format="n0" HideSpinButtons="true" />
+                        </div>
+                        @if (pembelian.JatuhTempo is not null)
+                        {
+                            <div class="flex-1">
+                                <MudTextField Label="Jatuh Tempo" Value="@($"{pembelian.JatuhTempo:dd/MM/yyyy} ({pembelian.HariJatuhTempo} hari)")" ReadOnly="true" tabindex="-1" />
+                            </div>
+                        }
+                    </MudStack>
+                    <MudText Typo="Typo.h6">
+                        <MudIcon Icon="@icon" Class="mr-3 mb-n1" />
+                        @judul
+                    </MudText>
+                    <MudStack Row="true" Class="w-250">
+                        <div class="flex-5">
+                            <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="transaksiPembelian.InputTanggal" Label="Tanggal" DateFormat="dd/MM/yyyy" />
+                        </div>
+                        <div class="flex-3">
+                            <MudTimePicker PickerVariant="PickerVariant.Dialog" @bind-Time="transaksiPembelian.InputWaktu" Label="Waktu" />
+                        </div>
+                    </MudStack>
+                    <MudStack Row="true">
+                        <div class="flex-1">
+                            <MudNumericField T="int" Label="Nominal" OnlyValidateIfDirty="true" Immediate="true" For="(() => transaksiPembelian.Nominal)" Value="transaksiPembelian.Nominal" Adornment="Adornment.Start" AdornmentText="Rp" Min="0" Max="1000000000" ValueChanged="NominalChanged" Format="n0" HideSpinButtons="true" />
+                        </div>
+                        <div class="flex-1">
+                            <MudNumericField Label="@transaksiPembelian.BalanceLabel" Value="transaksiPembelian.Balance" Adornment="Adornment.Start" AdornmentText="Rp" ReadOnly="true" tabindex="-1" Format="n0" HideSpinButtons="true" />
+                        </div>
+                    </MudStack>
+                    <MudTextField T="string" Lines="2" MaxLength="200" Label="Keterangan" @bind-Value="transaksiPembelian.Keterangan" />
+                </MudForm>
+            </div>
+            <div class="flex-3">
+                <MudDataGrid T="TransaksiPembelian" Items="pembelian.TransaksiPembelian" RowClick="@(e => RowClickEvent(e))" Elevation="2" Dense="true" Bordered="true" Hover="true" ShowColumnOptions="false" SortMode="SortMode.None">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h5">Daftar Transaksi Pembelian</MudText>
+                    </ToolBarContent>
+                    <Columns>
+                        <Column T="TransaksiPembelian" Field="Tanggal" HeaderStyle="width:145px">
+                            <CellTemplate>
+                                @context.Item.Tanggal.ToString("dd/MM/yyyy HH.mm")
+                            </CellTemplate>
+                        </Column>
+                        <Column T="TransaksiPembelian" Field="Keterangan" />
+                        <Column T="TransaksiPembelian" Field="Nominal" HeaderStyle="width:1px" CellStyle="text-align:right">
+                            <CellTemplate>
+                                @context.Item.Nominal.ToString("n0")
+                            </CellTemplate>
+                        </Column>
+                        <AuthorizeView Roles="Admin">
+                            <Authorized Context="konteks">
+                                <Column T="TransaksiPembelian" HeaderStyle="width:1px">
+                                    <CellTemplate>
+                                        <MudStack Row="true" Spacing="1">
+                                            <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(async e => await Hapus(context.Item))" />
+                                        </MudStack>
+                                    </CellTemplate>
+                                </Column>
+                            </Authorized>
+                        </AuthorizeView>
+                    </Columns>
+                </MudDataGrid>
+
+            </div>
+        </MudStack>
+        <MudStack Row="true" Class="mt-4">
+            <div>
+                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Help" @onmouseenter="@(() => popupTerbuka = true)" @onmouseleave="@(() => popupTerbuka = false)" />
+                <MudPopover Open="@popupTerbuka" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.BottomLeft" Fixed="true" Class="px-4">
+                    <MudStack Spacing="0" Class="pb-2">
+                        <MudText Typo="Typo.button" Class="pt-2">Nominal :</MudText>
+                        <div>▪ Tidak boleh kosong</div>
+                    </MudStack>
+                </MudPopover>
+            </div>
+            @if (result is null)
+            {
+                <MudText Typo="Typo.caption" Color="Color.Error" @onclick="@(async e => await Refresh())" Style="cursor: pointer;">Terjadi kesalahan saat menyimpan data, harap periksa kembali dan refresh form.</MudText>
+            }
+            <MudSpacer />
+            <MudStack Row="true" Spacing="2">
+                <AuthorizeView Policy="PembelianWrite">
+                    <Authorized Context="konteks">
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" Color="@warna" OnClick="(async () => await Save())" Disabled="@(result is null || (pembelian.Status == "Lunas" && baru) || (!baru && !konteks.User.HasClaim(System.Security.Claims.ClaimTypes.Role, "Admin")))">Simpan</MudButton>
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="(async () => await Reset())">Reset</MudButton>
+                    </Authorized>
+                </AuthorizeView>
+                <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Dark" OnClick="@(e => To.NavigateTo("/pembelian"))">Kembali</MudButton>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
+    @if (!string.IsNullOrEmpty(pembelian.Keterangan) || transaksiPembelian.Nominal > 0)
+    {
+        <NavigationLock ConfirmExternalNavigation="true" />
+    }
+}
+
+<MudMessageBox @ref="deleteDialog" Title="Konfirmasi Hapus">
+    <MessageContent>
+        <MudPaper Elevation="0" MinWidth="300px" Class="mx-5">
+            @pesanHapus
+        </MudPaper>
+    </MessageContent>
+    <NoButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Error" Size="Size.Small">Ya</MudButton>
+    </NoButton>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Dark" Size="Size.Small">Tidak</MudButton>
+    </YesButton>
+</MudMessageBox>

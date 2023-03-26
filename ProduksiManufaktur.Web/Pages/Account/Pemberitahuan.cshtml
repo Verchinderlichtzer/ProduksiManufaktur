@@ -1,0 +1,10 @@
+﻿@page
+@model ProduksiManufaktur.Web.Pages.Account.PemberitahuanModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewBag.Title = TempData["Title"];
+    Layout = "_Layout";
+}
+<div class="container">
+    <p>@Html.Raw(TempData["Pesan"])</p>
+</div>

@@ -1,0 +1,31 @@
+﻿@page
+@model ProduksiManufaktur.Web.Pages.Account.RegistrasiModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewBag.Title = "Registrasi";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <form method="post">
+        <input asp-for="Input.Email" placeholder="Email" required autofocus />
+        <span asp-validation-for="Input.Email" class="validation-message"> </span>
+        <input asp-for="Input.Password" placeholder="Password" required />
+        <span asp-validation-for="Input.Password" class="validation-message"> </span>
+        <input asp-for="Input.KonfirmasiPassword" placeholder="Konfirmasi Password" required />
+        <span asp-validation-for="Input.KonfirmasiPassword" class="validation-message"> </span>
+        <input asp-for="Input.Alamat" placeholder="Alamat" />
+        <span asp-validation-for="Input.Alamat" class="validation-message"> </span>
+        <input asp-for="Input.PhoneNumber" placeholder="Nomor Telepon" />
+        <span asp-validation-for="Input.PhoneNumber" class="validation-message"> </span>
+        <input asp-for="Input.TempatLahir" placeholder="Tempat Lahir" />
+        <span asp-validation-for="Input.TempatLahir" class="validation-message"> </span>
+        <input asp-for="Input.TanggalLahir" placeholder="Tanggal Lahir" />
+        <span asp-validation-for="Input.TanggalLahir" class="validation-message"> </span>
+        <button type="submit">Daftar</button>
+    </form>
+</div>
+<div id="form-footer">
+    <a href="/Account/Login">Login</a>
+    <a href="/Account/LupaPassword">Lupa Password</a>
+</div>

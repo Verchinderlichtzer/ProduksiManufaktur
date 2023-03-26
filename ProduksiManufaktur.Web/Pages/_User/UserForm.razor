@@ -1,0 +1,66 @@
+﻿@inherits UserFormBase
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@icon" Class="mr-3 mb-n1" />
+            @judul
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudContainer Class="h-375">
+            <MudForm Model="User" @ref="form">
+                <MudTextField ReadOnly="true" T="string" Label="Email" Value="User.Email" tabindex="-1" />
+                <MudTextField ReadOnly="true" T="string" Label="Alamat" Value="User.Alamat" tabindex="-1" />
+                <MudStack Row="true">
+                    <div class="flex-1">
+                        <MudTextField ReadOnly="true" T="string" Label="Nomor Telepon" Value="User.PhoneNumber" tabindex="-1" />
+                    </div>
+                    <div class="flex-1">
+                        <MudTextField ReadOnly="true" T="string" Label="Tempat Lahir" Value="User.TempatLahir" tabindex="-1" />
+                    </div>
+                    <div class="flex-1">
+                        <MudTextField ReadOnly="true" Label="Tanggal Lahir" Value="@(User.TanggalLahir.ToString("dd/MM/yyyy"))" tabindex="-1" />
+                    </div>
+                </MudStack>
+            </MudForm>
+            @if (User.EmailConfirmed)
+            {
+                <div class="mt-5 mb-3">
+                    <MudText Typo="Typo.h6">Role User</MudText>
+                    <MudSpacer />
+                    <MudAutocomplete T="Role" @ref="inputRole" Dense="true" Placeholder="Cari role..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" CoerceText="true" SearchFunc="@(async e => await CariRole(e))" ValueChanged="@(e => PilihRole(e))" ToStringFunc="@(x => x is null ? null : x.Name)" MaxItems="80" />
+                </div>
+                @if (User.UserRole!.Any())
+                {
+                    <MudChipSet AllClosable="true" OnClose="Closed">
+                        @foreach (var x in User.UserRole!.ConvertAll(x => x.RoleName))
+                        {
+                            <MudChip Text="@x" />
+                        }
+                    </MudChipSet>
+                }
+                else
+                {
+                    <MudText Typo="Typo.subtitle2">User tidak memiliki role</MudText>
+                }
+            }
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        @if (result is null)
+        {
+            <MudText Typo="Typo.caption" Color="Color.Error" @onclick="@(async e => await Refresh())" Style="cursor: pointer;">Terjadi kesalahan saat menyimpan data, harap periksa kembali dan refresh form.</MudText>
+        }
+        <MudSpacer />
+        <MudStack Row="true" Spacing="2">
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="@warna" OnClick="(async () => await Save())" Disabled="@(result is null)">Simpan</MudButton>
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Dark" OnClick="@(e => Cancel())">Batal</MudButton>
+        </MudStack>
+    </DialogActions>
+</MudDialog>
+
+@if (!string.IsNullOrEmpty(User.Email) || !string.IsNullOrEmpty(User.PhoneNumber) || !string.IsNullOrEmpty(User.Alamat) || !string.IsNullOrEmpty(User.TempatLahir))
+{
+    <NavigationLock ConfirmExternalNavigation="true" />
+}
