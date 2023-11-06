@@ -69,7 +69,7 @@ else
                     <MudText Typo="Typo.h6">Bahan yang dipakai</MudText>
                 </ToolBarContent>
                 <Columns>
-                    <Column T="ProduksiDetailBahan" Field="Bahan" Title="Nama Bahan">
+                    <Column T="ProduksiDetailBahan" Field="Bahan" Title="Nama Bahan" SortBy="@(e => e.Bahan!.Nama)">
                         <CellTemplate>
                             @context.Item.Bahan!.Nama
                         </CellTemplate>
@@ -88,7 +88,7 @@ else
                     <MudText Typo="Typo.h6">Karyawan yang Bekerja</MudText>
                 </ToolBarContent>
                 <Columns>
-                    <Column T="ProduksiDetailJasa" Field="Karyawan" Title="Nama Karyawan">
+                    <Column T="ProduksiDetailJasa" Field="Karyawan" Title="Nama Karyawan" SortBy="@(e => e.Karyawan!.Nama)">
                         <CellTemplate>
                             @context.Item.Karyawan!.Nama
                         </CellTemplate>
@@ -107,7 +107,7 @@ else
                     <MudText Typo="Typo.h6">Biaya overhead</MudText>
                 </ToolBarContent>
                 <Columns>
-                    <Column T="ProduksiDetailOverhead" Field="Overhead" Title="Nama Overhead">
+                    <Column T="ProduksiDetailOverhead" Field="Overhead" Title="Nama Overhead" SortBy="@(e => e.Overhead!.Nama)">
                         <CellTemplate>
                             @context.Item.Overhead!.Nama
                         </CellTemplate>

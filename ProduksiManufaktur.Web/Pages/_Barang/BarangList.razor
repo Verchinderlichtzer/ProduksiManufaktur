@@ -26,6 +26,9 @@ else
                         </MudTooltip>
                     </Authorized>
                 </AuthorizeView>
+                <MudTooltip Text="Cek konsistensi stok" Arrow="true" Placement="Placement.Bottom">
+                    <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.DoneAll" Color="Color.Tertiary" OnClick="@(async e => await CekStok())" />
+                </MudTooltip>
             </MudStack>
             <MudSpacer />
             <MudTextField Immediate="true" @bind-Value="dicari" Placeholder="Cari barang..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
@@ -71,6 +74,20 @@ else
     </MessageContent>
     <NoButton>
         <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Error" Size="Size.Small">Ya</MudButton>
+    </NoButton>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Dark" Size="Size.Small">Tidak</MudButton>
+    </YesButton>
+</MudMessageBox>
+
+<MudMessageBox @ref="cekStokDialog" Title="Cek Stok Barang">
+    <MessageContent>
+        <MudPaper Elevation="0" MinWidth="300px" Class="mx-5">
+            Cek konsistensi stok barang?
+        </MudPaper>
+    </MessageContent>
+    <NoButton>
+        <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Success" Size="Size.Small">Ya</MudButton>
     </NoButton>
     <YesButton>
         <MudButton Variant="Variant.Filled" Class="ma-1" Color="Color.Dark" Size="Size.Small">Tidak</MudButton>

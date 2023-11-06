@@ -24,6 +24,7 @@ namespace ProduksiManufaktur.Web.Pages._Barang
         protected NavigationManager To { get; set; } = null!;
 
         protected MudMessageBox? deleteDialog = new();
+        protected MudMessageBox? cekStokDialog = new();
 
         protected List<Barang> listBarang = null!;
 
@@ -92,6 +93,19 @@ namespace ProduksiManufaktur.Web.Pages._Barang
             {
                 Snackbar.Add("Barang telah digunakan dalam transaksi", Severity.Error);
                 return;
+            }
+        }
+
+        protected async Task CekStok()
+        {
+            bool? result = await cekStokDialog!.Show();
+            if (result == false)
+            {
+                if (await BarangService.CekStokBarang())
+                    Snackbar.Add("Stok barang konsisten!", Severity.Success);
+                else
+                    Snackbar.Add("Stok barang tidak konsisten.", Severity.Warning);
+                await LoadData();
             }
         }
 

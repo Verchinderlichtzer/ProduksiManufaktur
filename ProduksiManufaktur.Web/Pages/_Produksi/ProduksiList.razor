@@ -19,13 +19,6 @@ else
                         </MudTooltip>
                     </Authorized>
                 </AuthorizeView>
-                <AuthorizeView Policy="ProduksiWrite">
-                    <Authorized Context="konteks">
-                        <MudTooltip Text="Retur Produksi" Arrow="true" Placement="Placement.Bottom">
-                            <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.KeyboardReturn" Color="Color.Secondary" OnClick="@(e => To.NavigateTo($"/produksi/retur"))" />
-                        </MudTooltip>
-                    </Authorized>
-                </AuthorizeView>
             </MudStack>
             <MudSpacer />
             <MudTextField Immediate="true" @bind-Value="dicari" Placeholder="Cari produksi..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
@@ -37,7 +30,7 @@ else
                     @context.Item.Tanggal.ToString("dd/MM/yyyy HH.mm")
                 </CellTemplate>
             </Column>
-            <Column T="Produksi" Field="Barang" Title="Nama Barang">
+            <Column T="Produksi" Field="Barang" Title="Nama Barang" SortBy="@(e => e.Barang!.Nama)">
                 <CellTemplate>
                     @context.Item.Barang!.Nama
                 </CellTemplate>

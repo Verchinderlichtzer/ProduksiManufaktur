@@ -4,7 +4,6 @@
     {
         /// <summary>No Auto Generate</summary>
         public int Id { get; set; }
-
         public int BarangSatuanId { get; set; }
         public string ReturPenjualanId { get; set; } = null!;
 

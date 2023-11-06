@@ -28,6 +28,8 @@
 
         Task<bool> DeletableBahanSatuan(int id);
 
+        Task<bool> CekStokBahan();
+
         /// <summary>List PerubahanStokBahan { Id, Tanggal, Jenis, Jumlah, Keterangan, Bahan { Nama } } > PerubahanStokBahanList</summary>
         Task<List<PerubahanStokBahan>> GetPerubahanStok();
 
@@ -120,6 +122,12 @@
         public async Task<bool> DeletableBahanSatuan(int id)
         {
             var jsonString = await _httpClient.GetStringAsync($"api/bahan/bahansatuan/deletable/{id}");
+            return JsonSerializer.Deserialize<bool>(jsonString)!;
+        }
+
+        public async Task<bool> CekStokBahan()
+        {
+            var jsonString = await _httpClient.GetStringAsync("api/bahan/cekstok");
             return JsonSerializer.Deserialize<bool>(jsonString)!;
         }
 

@@ -120,7 +120,8 @@
         }
 
         /// <summary>
-        /// Membuat Id baru untuk string. Secara otomatis mengisi kekosongan Id
+        /// <para>Membuat Id baru untuk string. Secara otomatis mengisi kekosongan Id</para>
+        /// <para>barang.Id = GenerateId(_appDbContext.Barang.Select(x => x.Id), 4, "BRG");</para>
         /// </summary>
         public static string GenerateId(IEnumerable<string> ids, int digit, string prefix)
         {
@@ -134,7 +135,8 @@
         }
 
         /// <summary>
-        /// Membuat satu Id int baru (mengisi kekosongan)
+        /// <para>Membuat satu Id int baru (mengisi kekosongan)</para>
+        /// <para>perubahanStokBarang.Id = GenerateId(_appDbContext.PerubahanStokBarang.Select(x => x.Id));</para>
         /// </summary>
         public static int GenerateId(IEnumerable<int> ids)
         {
@@ -148,7 +150,8 @@
         }
 
         /// <summary>
-        /// Membuat Id baru untuk transaksi berdasarkan tanggalnya
+        /// <para>Membuat Id baru untuk transaksi berdasarkan tanggalnya</para>
+        /// <para>pembelian.Id = GenerateId("PBLN", pembelian.Tanggal, _appDbContext.Pembelian.Where(x => x.Tanggal.Date == pembelian.Tanggal.Date).Select(x => x.Id));</para>
         /// </summary>
         public static string GenerateId(string prefix, DateTime tanggalTerpilih, IEnumerable<string> ids)
         {
@@ -157,7 +160,8 @@
         }
 
         /// <summary>
-        /// Membuat kumpulan Id int baru untuk Detail (mengisi kekosongan)
+        /// <para>Membuat kumpulan Id int baru untuk Detail (mengisi kekosongan)</para>
+        /// <para>var idsDetail = GenerateId(_appDbContext.FormulasiDetail.Select(x => x.Id).DefaultIfEmpty().Max(), _appDbContext.FormulasiDetail.Select(x => x.Id), formulasiDetail);</para>
         /// </summary>
         public static int[] GenerateId<T>(int terbesar, IEnumerable<int> ids, IEnumerable<T> dataBaru)
         {

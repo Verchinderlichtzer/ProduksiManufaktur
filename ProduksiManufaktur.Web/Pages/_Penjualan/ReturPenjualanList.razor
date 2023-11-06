@@ -35,7 +35,7 @@ else
                     @context.Item.GrandTotal.ToString("n0")
                 </CellTemplate>
             </Column>
-            <Column T="ReturPenjualan" Field="Penjualan" Title="Nama Customer" HeaderStyle="width:230px">
+            <Column T="ReturPenjualan" Field="Penjualan" Title="Nama Customer" HeaderStyle="width:230px" SortBy="@(e => e.Penjualan!.Customer!.Nama)">
                 <CellTemplate>
                     @context.Item.Penjualan!.Customer!.Nama
                 </CellTemplate>

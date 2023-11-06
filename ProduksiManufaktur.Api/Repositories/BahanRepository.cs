@@ -1,4 +1,6 @@
-﻿namespace ProduksiManufaktur.Api.Repositories
+﻿using ProduksiManufaktur.Models;
+
+namespace ProduksiManufaktur.Api.Repositories
 {
     /// <summary>CRUD Bahan, CRUD PerubahanStokBahan</summary>
     public interface IBahanRepository
@@ -27,6 +29,8 @@
         Task<List<BahanSatuan>> FindBahanSatuan(string bahanId);
 
         Task<bool> DeletableBahanSatuan(int id);
+
+        Task<bool> CekStokBahan();
 
         /// <summary>List PerubahanStokBahan { Id, Tanggal, Jenis, Jumlah, Keterangan, Bahan { Nama } } > PerubahanStokBahanList</summary>
         Task<List<PerubahanStokBahan>> GetPerubahanStok();
@@ -142,6 +146,37 @@
         public async Task<bool> DeletableBahanSatuan(int id)
         {
             return await _appDbContext.BahanSatuan.AnyAsync(x => x.Id == id && !x.PembelianDetail!.Any());
+        }
+
+        public async Task<bool> CekStokBahan()
+        {
+            List<Bahan> bahan = await _appDbContext.Bahan
+                .Include(x => x.ProduksiDetailBahan)
+                .Include(x => x.PerubahanStokBahan)
+                .Include(x => x.BahanSatuan!).ThenInclude(x => x.PembelianDetail)
+                .Include(x => x.BahanSatuan!).ThenInclude(x => x.ReturPembelianDetail)
+                .ToListAsync();
+
+            var stokYgBenar = bahan.ConvertAll(x => new Bahan
+            {
+                Id = x.Id,
+                Stok = x.StokAwal + x.BahanSatuan!.Sum(y => y.PembelianDetail!.Sum(z => z.Jumlah * y.KonversiStok)) - x.ProduksiDetailBahan!.Sum(y => y.Jumlah) - x.BahanSatuan!.Sum(y => y.ReturPembelianDetail!.Sum(z => z.Jumlah * y.KonversiStok)) - x.PerubahanStokBahan!.Where(y => y.Jenis == "Pengurangan").Sum(y => y.Jumlah) + x.PerubahanStokBahan!.Where(y => y.Jenis == "Penambahan").Sum(y => y.Jumlah)
+            });
+
+            bool konsisten = true;
+            foreach (var item in bahan)
+            {
+                decimal stokBenar = stokYgBenar.First(x => x.Id == item.Id).Stok;
+                if (item.Stok != stokBenar)
+                {
+                    item.Stok = stokBenar;
+                    konsisten = false;
+                    if (stokBenar < 0) throw new DbUpdateException();
+                }
+            }
+            await _appDbContext.SaveChangesAsync();
+
+            return konsisten;
         }
 
         public async Task<List<PerubahanStokBahan>> GetPerubahanStok()

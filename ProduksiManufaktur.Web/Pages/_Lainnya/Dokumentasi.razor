@@ -1,28 +1,210 @@
 ﻿@page "/dokumentasi"
 @inherits DokumentasiBase
 
-<h3>Dokumentasi</h3>
+<MudPaper MinHeight="1250px" Width="830px" Class="pa-4" Elevation="0">
+    <MudText Typo="Typo.h4">Dokumentasi</MudText>
+    <section id="pengenalan">
+        <MudText Typo="Typo.h5" Class="mt-6">Pengenalan</MudText>
+        <MudText Typo="Typo.body2">
+            Produksi manufaktur adalah proses pembuatan barang jadi menggunakan bahan baku atau bahan mentah oleh suatu perusahaan atau seorang pengusaha. Jenis barang yang diproduksi bisa bermacam macam, misalnya pakaian, parabot rumah tangga, alat-alat mesin, peralatan elektronik, dan masih banyak lagi. Berikut gambaran & fitur yang diberikan pada aplikasi ini :
+            <ol class="pl-4">
+                <li>Untuk mengakses web, user diharuskan login terlebih dahulu. Jika belum memiliki akun, user dapat melakukan registrasi.</li>
+                <li>Jika user telah selesai registrasi, user harus konfirmasi email terlebih dahulu dengan mengklik link konfirmasi yang masuk pada email user.</li>
+                <li>Tiap user memiliki role, yang digunakan untuk membatasi hak akses user. seperti hak untuk melihat data dan hak untuk mengedit data.</li>
+                <li>Proses transaksi utama : Perusahaan membeli bahan dari supplier. Bahan tersebut kemudian diolah menjadi barang jadi. Setelah itu barang yang siap pakai akan dijual ke customer.</li>
+                <li>Bahan dan barang hasil transaksi dapat di-retur.</li>
+                <li>Pembayaran dapat dilakukan dengan tunai / kredit.</li>
+                <li>Beberapa jenis laporan seperti laporan master, laporan faktur, laporan pembelian / penjualan dalam jangka waktu tertentu, sampai grafik.</li>
+                <li>Fitur-fitur lain seperti pencarian menu, ganti & lupa password, dark mode.</li>
+            </ol>
+        </MudText>
+        <MudText Typo="Typo.body2">Untuk video demonstrasi aplikasi ini dapat dilihat <MudLink Typo="Typo.body2" Target="_blank" Href="https://www.youtube.com/watch?v=b7rGqhpCHGs">disini</MudLink>.</MudText>
+    </section>
+    <section id="otentikasi-pengguna">
+        <MudText Typo="Typo.h5" Class="mt-6">Otentikasi Pengguna</MudText>
+        <MudText Typo="Typo.body2">Ada tiga hal yang perlu diketahui dalam Otentikasi Pengguna :</MudText>
+        <MudText Typo="Typo.h6">User</MudText>
+        <MudText Typo="Typo.body2">User adalah pengguna atau akun yang terdaftar di dalam sistem. Setiap user diwajibkan login terlebih dahulu untuk mengautentikasi siapa yang sedang menggunakan sistem. Nantinya, ia dapat melakukan beberapa aksi pada aplikasi, tergantung role yang dimiliki user tersebut. User yang baru dibuat tidak memiliki role / claim apapun.</MudText>
+        <MudText Typo="Typo.h6">Role</MudText>
+        <MudText Typo="Typo.body2">Role adalah sebuah peran atau kelas yang diberikan kepada user. Role digunakan untuk memberikan hak akses tertentu pada user, sehingga user tersebut dapat melihat atau melakukan hal-hal yang hanya dapat dilakukan olehnya. Satu user bisa memiliki banyak role. Ada satu role spesial bernama "Admin", yang mana user dengan role ini memiliki hak akses penuh terhadap aplikasi. Role ini tidak bisa diedit dan dihapus.</MudText>
+        <MudText Typo="Typo.h6">Claim</MudText>
+        <MudText Typo="Typo.body2">
+            <p>Claim digunakan untuk menyimpan informasi mengenai menu dan aksi apa yang dapat diakses oleh user. Terdapat 2 jenis claim, User Claim dan Role Claim. Sesuai namanya, User Claim adalah claim yang dimiliki oleh satu user. Sedangkan Role Claim adalah claim yang dimiliki user dengan role tertentu. User Claim memiliki prioritas yang lebih tinggi daripada Role Claim, artinya jika ada jenis claim yang sama dari User Claim dan Role Claim, maka yang dipilih adalah User Claim. Ada tiga nilai dari claim :</p>
+            <ol class="pl-4">
+                <li>None (User Claim)</li>
+                <li>No Access</li>
+                <li>Read Only</li>
+                <li>Read & Write</li>
+            </ol>
+            <p>Berikut contoh gambaran tentang user, role dan claim pada aplikasi ini. Misalkan terdapat seorang user, ia memiliki satu role, sebut saja Operator. Pada Operator, terdapat claim barang berupa read only. Maka yang terjadi adalah user tersebut hanya bisa melihat daftar barangnya saja. Kemudian user tersebut diberi role kedua, sebut saja Staff. Pada Staff, terdapat claim barang berupa read & write. Maka yang dipilih sekarang adalah yang read & write. Karena ia memiliki kedudukan yang lebih tinggi daripada read only, jadi sekarang, user tersebut bisa memanipulasi data barang. Dan yang terakhir, ketika user diberi user claim barang dengan no access. Maka kondisi akhir dari user tersebut adalah ia tidak bisa mengakses menu barang.</p>
+        </MudText>
+        <MudText Typo="Typo.body2"><b>Jika user mengalami perubahan pada role / claim sedangkan ia dalam keadaan login, maka hak akses akan diterapkan setelah ia log-in ulang</b></MudText>
+    </section>
+    <section id="pengisian-validasi-formulir">
+        <MudText Typo="Typo.h5" Class="mt-6">Pengisian & Validasi Formulir</MudText>
+        <MudText Typo="Typo.body2">Setiap form memiliki validasi dalam penginputan data. Aturan tersebut bisa dilihat pada icon "tanda tanya" yang ada di pojok kiri bawah. Ada pula validasi yang tidak tertulis dan diterapkan secara otomatis, contohnya jumlah karakter yang diperbolehkan, minimal & maksimal angka, dan jumlah tempat desimal setelah koma. Berikut ini contoh dari bentuk form.</MudText>
+        <MudImage Class="my-3" Src="img/dokumentasi/default_form.png" Fluid="true" Alt="Default Form" />
+        <MudText Typo="Typo.body2">Gambar diatas adalah contoh dari Form Karyawan. Bentuk form ini mirip dengan form master lainnya seperti bahan, barang, supplier, customer, pekerjaan, dan overhead. Beda halnya dengan Form Formulasi, dikarenakan form tersebut memiliki "detail". Berikut contoh dari Form Formulasi.</MudText>
+        <MudImage Class="my-3" Src="img/dokumentasi/formulasi.png" Fluid="true" Alt="Formulasi" />
+        <MudText Typo="Typo.body2">Ketika terjadi kesalahan dalam penginputan data, yang mana data yang dimasukkan tidak valid, maka muncul pesan kesalahan di bawah masing-masing input yang bersangkutan (setelah tombol simpan diklik).</MudText>
+        <MudImage Class="my-3" Src="img/dokumentasi/error_form.png" Fluid="true" Alt="Error Form" />
+        <MudText Typo="Typo.body2">Untuk Form Transaksi Lain, user bisa menginputnya secara sekaligus. Cukup tekan tanda tambah yang ada di paling bawah form, maka jumlah form bertambah.</MudText>
+        <MudImage Class="my-3" Src="img/dokumentasi/transaksi_lain.png" Fluid="true" Alt="Form Transaksi Lain" />
+        <MudText Typo="Typo.body2">Terkadang, setelah kita mengklik tombol simpan, muncul error seperti berikut.</MudText>
+        <MudImage Class="my-3" Src="img/dokumentasi/error.png" Fluid="true" Alt="Error" />
+        <MudText Typo="Typo.body2">
+            Ada beberapa penyebab mengapa error ini muncul :
+            <ol class="pl-4">
+                <li>Konkurensi data, yaitu pengeditan satu data yang dilakukan oleh beberapa user di waktu yang bersamaan.</li>
+                <li>Informasi mengenai item yang berubah selama proses input data.</li>
+                <li>Stok bahan / barang yang berubah selama proses input data.</li>
+                <li>Penginputan data yang dapat membuat stok bahan / barang dibawah nol.</li>
+            </ol>
+        </MudText>
+        <MudText Typo="Typo.body2">
+            Cara mengatasinya cukup dengan mengklik pesan tersebut, maka form akan merefresh tanpa merubah isi dari input form. Setelah refresh, cek kembali form, apakah ada perubahan atau tidak? jika sudah, klik simpan kembali. Tapi jika error tersebut masih muncul, periksa penyebabnya seperti yang sudah dijelaskan di atas.
+        </MudText>
+        <MudText Typo="Typo.body2">
+            Seorang Admin dapat mengedit / menghapus transaksi pembelian, penjualan, retur, dan produksi sesuai kebutuhan. Walaupun hal tersebut sangat <span class="mud-error-text">tidak disarankan</span>. Stok bahan dan stok barang akan tetap konsisten selama aplikasi digunakan dengan baik dan benar. User dapat memeriksa apakah stok item konsisten atau tidak dengan mengklik tombol "checklist dua" pada menu bahan / barang. Jika stok item tidak konsisten, sistem akan memperbaiki jumlah stok secara <b>otomatis</b>. Perlu diingat, sistem akan menghitung SEMUA transaksi yang berhubungan dengan jumlah item. Semakin banyak transaksi, semakin lama proses perhitungan stok item.
+        </MudText>
+    </section>
+    <section id="mekanisme-transaksi">
+        <MudText Typo="Typo.h5" Class="mt-6">Mekanisme Transaksi</MudText>
+        <MudCarousel Class="mud-width-full border-dashed border-2 mud-border-inherit my-3" Style="height:500px;" ShowArrows="false" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="false" TData="object">
+            <BulletTemplate Context="selected">
+                <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+                    <span class="mud-icon-button-label">
+                        <MudIcon Icon="@(selected ? Icons.Material.Filled.Circle : Icons.Material.Outlined.Circle)" Color="@Color.Dark" />
+                    </span>
+                </div>
+            </BulletTemplate>
+            @*<PreviousButtonTemplate>
+                <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+                    <span class="mud-icon-button-label">
+                        <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.ArrowLeft" Color="@Color.Dark" />
+                    </span>
+                </div>
+            </PreviousButtonTemplate>
+            <NextButtonTemplate>
+                <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+                    <span class="mud-icon-button-label">
+                        <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.ArrowRight" Color="@Color.Dark" />
+                    </span>
+                </div>
+            </NextButtonTemplate>*@
+            <ChildContent>
+                <MudCarouselItem Transition="Transition.Slide" Color="@Color.Transparent">
+                    <MudImage Src="img/dokumentasi/menu_pembelian.png" Fluid="true" Alt="Menu Pembelian" />
+                </MudCarouselItem>
+                <MudCarouselItem Transition="Transition.Slide" Color="@Color.Transparent">
+                    <MudImage Src="img/dokumentasi/form_pembelian.png" Fluid="true" Alt="Form Pembelian" />
+                </MudCarouselItem>
+                <MudCarouselItem Transition="Transition.Slide" Color="@Color.Transparent">
+                    <MudImage Src="img/dokumentasi/form_retur.png" Fluid="true" Alt="Form Retur" />
+                </MudCarouselItem>
+                <MudCarouselItem Transition="Transition.Slide" Color="@Color.Transparent">
+                    <MudImage Src="img/dokumentasi/form_transaksi.png" Fluid="true" Alt="Form Transaksi" />
+                </MudCarouselItem>
+            </ChildContent>
+        </MudCarousel>
+        <MudText Typo="Typo.body2">
+            Berikut ketentuan / aturan yang berlaku untuk pembelian dan penjualan :
+            <ol class="pl-4">
+                <li>Saat membuat transaksi baru (dengan uang muka). Pembayaran tersebut akan masuk ke Transaksi (dapat dilihat dengan mengklik tombol dolar warna ungu pada daftar pembelian / penjualan).</li>
+                <li>Total pembayaran yang tersimpan tidak bisa lebih dari grand total.</li>
+                <li>Jika ada faktor yang menyebabkan total pembayaran melebihi grand total, maka pembayaran akan dikurangi mulai dari yang terbaru (jika pembayaran terbaru habis, dilanjutkan ke pembayaran sebelumnya, dst).</li>
+                <li>Pada saat meretur item, jumlah item maksimal sama dengan jumlah item yang ditransaksi (dibeli / dijual).</li>
+                <li>Item yang sudah diretur tidak dapat dihapus dari transaksi utama, atau diedit jumlahnya sampai dibawah jumlah yang diretur.</li>
+                <li>Transaksi yang beberapa itemnya sudah retur tidak dapat dihapus (jika ingin dihapus, hapus dulu returnya).</li>
+                <li>Pada saat mengedit atau menghapus transaksi, perlu diperhatikan antara jumlah item dan stok yang tersedia.</li>
+            </ol>
+        </MudText>
+    </section>
+    <section id="mekanisme-produksi">
+        <MudText Typo="Typo.h5" Class="mt-6">Mekanisme Produksi</MudText>
+        <MudImage Class="my-3" Src="img/dokumentasi/produksi.png" Fluid="true" Alt="Form Produksi" />
+        <MudText Typo="Typo.body2">
+            Berikut penjelasan mengenai Form Produksi :
+            <ol class="pl-4">
+                <li>Pertama, pilih barang yang akan diproduksi. Setelah itu, muncul daftar formulasi yang dimiliki oleh barang tersebut (jika ada). User dapat memilih Formulasi untuk mengisi jumlah barang dan bahan yang dibutuhkan secara otomatis, atau menginputnya secara manual.</li>
+                <li>Di sebelah "jumlah barang" terdapat checkbox untuk mengunci perbandingan antara jumlah barang dan jumlah bahan. Jika diaktifkan, jumlah bahan akan selalu mengikuti jumlah barang (mempertahankan rasionya). Dalam kondisi ini, kita tidak dapat mengubah jumlah bahan secara mandiri.</li>
+                <li>Formulasi hanya bekerja sebagai "template" saja, artinya kita bisa mengedit jumlah barang dan daftar bahan setelah memilih Formulasi.</li>
+                <li>Pada saat mengedit atau menghapus produksi, perlu diperhatikan antara jumlah item dan stok yang tersedia. Jika bahan yang dibutuhkan kurang, maka warna pada "Stok Akhir" akan menjadi merah.</li>
+                <li>Karyawan dan Overhead hanya opsional.</li>
+            </ol>
+        </MudText>
+    </section>
+    <section id="laporan">
+        <MudText Typo="Typo.h5" Class="mt-6">Laporan</MudText>
+        <MudImage Class="my-3" Src="img/dokumentasi/laporan.png" Fluid="true" Alt="Laporan" />
+        <MudText Typo="Typo.body2">Laporan terbagi menjadi tiga bagian, sebut saja bagian kiri, bagian kanan, dan bagian tengah. Pada bagian kiri, terdapat Laporan Master, Laporan Transaksi, dan Laporan Grafik. Pada bagian kanan, terdapat Laporan Entitas (Laporan yang spesifik terhadap satu entitas). Sedangkan bagian tengah, berupa filter laporan yang digunakan untuk menyaring laporan yang ditampilkan.</MudText>
+        <MudText Typo="Typo.h6">Laporan Master</MudText>
+        <MudText Typo="Typo.body2">
+            Berisi laporan data master.
+            <ol class="pl-4">
+                <li>Bahan</li>
+                <li>Barang</li>
+                <li>Karyawan</li>
+                <li>Supplier</li>
+                <li>Customer</li>
+            </ol>
+        </MudText>
+        <MudText Typo="Typo.h6">Laporan Transaksi</MudText>
+        <MudText Typo="Typo.body2">
+            Berisi laporan beberapa transaksi. Biasa digunakan untuk menampilkan beberapa transaksi dalam periode waktu tertentu sekaligus.
+            <ol class="pl-4">
+                <li>Pembelian <sup>1</sup> <sup>2</sup></li>
+                <li>Penjualan <sup>1</sup> <sup>2</sup></li>
+                <li>Produksi <sup>1</sup></li>
+                <li>Transaksi Lain <sup>1</sup></li>
+                <li>Kas <sup>1</sup></li>
+            </ol>
+        </MudText>
+        <MudText Typo="Typo.h6">Laporan Grafik</MudText>
+        <MudText Typo="Typo.body2">
+            Berisi laporan yang menampilkan grafik pendapatan & pengeluaran pada tahun tertentu (tidak termasuk transaksi lain-lain dan biaya produksi).
+            <ol class="pl-4">
+                <li>Diagram Batang <sup>3</sup></li>
+                <li>Diagram Garis <sup>3</sup></li>
+            </ol>
+        </MudText>
+        <MudText Typo="Typo.h6">Laporan Entitas</MudText>
+        <MudText Typo="Typo.body2">
+            Berisi laporan yang spesifik terhadap satu entitas, contohnya faktur penjualan, penggajian karyawan, laporan stok bahan tertentu, dll.
+            <ol class="pl-6">
+                <li>Faktur Pembelian</li>
+                <li>Retur Pembelian</li>
+                <li>Faktur Penjualan</li>
+                <li>Retur Penjualan</li>
+                <li>Produksi</li>
+                <li>Formulasi</li>
+                <li>Penggajian (Karyawan) <sup>1</sup></li>
+                <li>Bahan <sup>1</sup></li>
+                <li>Barang <sup>1</sup></li>
+                <li>Supplier <sup>1</sup> <sup>2</sup></li>
+                <li>Customer <sup>1</sup> <sup>2</sup></li>
+            </ol>
+        </MudText>
+        <MudText Class="my-2" Typo="Typo.body2">
+            Filter digunakan untuk menyaring laporan yang akan ditampilkan. Berikut <b>catatan kaki</b>nya :
+            <ol class="pl-4">
+                <li>Dapat diterapkan filter tanggal.</li>
+                <li>Dapat diterapkan filter metode bayar & status.</li>
+                <li>Khusus filter tanggal (tahunan).</li>
+            </ol>
+        </MudText>
+        <MudText Typo="Typo.body2">Ada beberapa bagian pada laporan yang diambil dari "Profil Perusahaan". Contohnya pada bagian header dan penandatanganan laporan.</MudText>
+    </section>
+</MudPaper>
 
-
-
-<MudPaper>
-    <MudPaper MinHeight="1250px" Width="850px" Elevation="0">
-        <section id="satu">
-            <h1>Satu</h1>
-        </section>
-        <section id="dua">
-            <h1>Dua</h1>
-        </section>
-    </MudPaper>
-    
-    <MudPaper Width="240px" Style="position: fixed; right: 0; top: 48px; bottom: 0;" Elevation="0">
-        <MudTimeline TimelinePosition="TimelinePosition.Left">
-            <MudTimelineItem Class="satu">
-                <MudText Style="cursor: pointer;" @onclick="@(() => NavigateToSection("satu"))">Item A</MudText>
-            </MudTimelineItem>
-            <MudTimelineItem Class="dua">
-                <MudText Style="cursor: pointer;" @onclick="@(() => NavigateToSection("dua"))">Item B</MudText>
-            </MudTimelineItem>
-        </MudTimeline>
-    </MudPaper>
+<MudPaper Width="240px" Style="position: fixed; right: 0; top: 48px; bottom: 0;" Elevation="0">
+    <MudList Clickable="true" Dense="true" SelectedValueChanged="@(async e => {sectionId = e; await NavigateToSection();})">
+        <MudListSubheader>Daftar Konten:</MudListSubheader>
+        <MudListItem id="nav-pengenalan" OnClick="@(e => NavigateToSection())" Text="Pengenalan" Value="@("pengenalan")" />
+        <MudListItem id="nav-otentikasi-pengguna" OnClick="@(e => NavigateToSection())" Text="Otentikasi Pengguna" Value="@("otentikasi-pengguna")" />
+        <MudListItem id="nav-pengisian-validasi-formulir" OnClick="@(e => NavigateToSection())" Text="Pengisian & Validasi Formulir" Value="@("pengisian-validasi-formulir")" />
+        <MudListItem id="nav-mekanisme-transaksi" OnClick="@(e => NavigateToSection())" Text="Mekanisme Transaksi" Value="@("mekanisme-transaksi")" />
+        <MudListItem id="nav-mekanisme-produksi" OnClick="@(e => NavigateToSection())" Text="Mekanisme Produksi" Value="@("mekanisme-produksi")" />
+        <MudListItem id="nav-laporan" OnClick="@(e => NavigateToSection())" Text="Laporan" Value="@("laporan")" />
+    </MudList>
 </MudPaper>

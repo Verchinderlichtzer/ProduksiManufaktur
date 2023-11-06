@@ -41,10 +41,14 @@ namespace ProduksiManufaktur.Web.Pages.Account
             [Compare("Password", ErrorMessage = "Konfirmasi password harus sama dengan password")]
             public string KonfirmasiPassword { get; set; } = string.Empty;
 
+            [Required(ErrorMessage = "Alamat wajib diisi")]
             public string Alamat { get; set; } = string.Empty;
+
+            [Required(ErrorMessage = "Nomor Telepon wajib diisi")]
             public string PhoneNumber { get; set; } = string.Empty;
 
             [Display(Name = "Tempat Lahir")]
+            [Required(ErrorMessage = "Tempat Lahir wajib diisi")]
             public string TempatLahir { get; set; } = string.Empty;
 
             [DataType(DataType.Date)]

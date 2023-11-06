@@ -37,11 +37,11 @@ namespace ProduksiManufaktur.Models
 
     public class UserRole : IdentityUserRole<string>
     {
-        public User? User { get; set; }
-        public Role? Role { get; set; }
-
         /// <summary>Ignored</summary>
         public string RoleName { get; set; } = string.Empty;
+
+        public User? User { get; set; }
+        public Role? Role { get; set; }
     }
 
     public class UserLogin : IdentityUserLogin<string>

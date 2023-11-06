@@ -25,6 +25,8 @@
 
         Task<bool> DeletableBarangSatuan(int id);
 
+        Task<bool> CekStokBarang();
+
         /// <summary>List PerubahanStokBarang { Id, Tanggal, Jenis, Jumlah, Keterangan, Barang { Nama } } > PerubahanStokBarangList</summary>
         Task<List<PerubahanStokBarang>> GetPerubahanStok();
 
@@ -127,6 +129,37 @@
         public async Task<bool> DeletableBarangSatuan(int id)
         {
             return await _appDbContext.BarangSatuan.AnyAsync(x => x.Id == id && !x.PenjualanDetail!.Any());
+        }
+
+        public async Task<bool> CekStokBarang()
+        {
+            List<Barang> barang = await _appDbContext.Barang
+                .Include(x => x.Produksi)
+                .Include(x => x.PerubahanStokBarang)
+                .Include(x => x.BarangSatuan!).ThenInclude(x => x.PenjualanDetail)
+                .Include(x => x.BarangSatuan!).ThenInclude(x => x.ReturPenjualanDetail)
+                .ToListAsync();
+
+            var stokYgBenar = barang.ConvertAll(x => new Barang
+            {
+                Id = x.Id,
+                Stok = x.StokAwal - x.BarangSatuan!.Sum(y => y.PenjualanDetail!.Sum(z => z.Jumlah * y.KonversiStok)) + x.Produksi!.Sum(y => y.Jumlah) + x.BarangSatuan!.Sum(y => y.ReturPenjualanDetail!.Sum(z => z.Jumlah * y.KonversiStok)) - x.PerubahanStokBarang!.Where(y => y.Jenis == "Pengurangan").Sum(y => y.Jumlah) + x.PerubahanStokBarang!.Where(y => y.Jenis == "Penambahan").Sum(y => y.Jumlah)
+            });
+
+            bool konsisten = true;
+            foreach (var item in barang)
+            {
+                decimal stokBenar = stokYgBenar.First(x => x.Id == item.Id).Stok;
+                if (item.Stok != stokBenar)
+                {
+                    item.Stok = stokBenar;
+                    konsisten = false;
+                    if (stokBenar < 0) throw new DbUpdateException();
+                }
+            }
+            await _appDbContext.SaveChangesAsync();
+
+            return konsisten;
         }
 
         public async Task<List<PerubahanStokBarang>> GetPerubahanStok()

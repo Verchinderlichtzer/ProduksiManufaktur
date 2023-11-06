@@ -281,7 +281,7 @@ namespace ProduksiManufaktur.Api.Repositories
             model.GrandTotal = pembelian.GrandTotal;
             model.JatuhTempo = pembelian.JatuhTempo;
 
-            var result = await _appDbContext.ReturPembelian.LastOrDefaultAsync(x => x.PembelianId == pembelian.Id);
+            var result = await _appDbContext.ReturPembelian.OrderByDescending(x => x.PembelianId == pembelian.Id).FirstOrDefaultAsync(x => x.PembelianId == pembelian.Id);
             if (result is not null && (int)(pembelian.Subtotal * ((pembelian.PPN + 100) / 100m)) - pembelian.Terbayar - result.GrandTotal > 0)
                 model.Status = "Belum Lunas";
             else

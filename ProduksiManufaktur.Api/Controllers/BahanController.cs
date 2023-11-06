@@ -150,6 +150,20 @@
             }
         }
 
+        [HttpGet("cekstok"), Authorize(Policy = "ProdukRead")]
+        public async Task<ActionResult<bool>> CekStokBahan()
+        {
+            try
+            {
+                var result = await _bahanRepository.CekStokBahan();
+                return Ok(JsonSerializer.Serialize(result, _options));
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
+
         [HttpGet("perubahanstok"), Authorize]
         public async Task<ActionResult<string>> OnGetPerubahanStok()
         {

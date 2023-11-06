@@ -12,7 +12,7 @@ window.downloadFileFromStream = async (fileName, contentStreamReference) => {
 
 window.updateUrl = () => {
     let sections = document.querySelectorAll('section');
-    let navLinks = document.querySelectorAll('.mud-timeline .mud-timeline-item .mud-timeline-item-divider .mud-timeline-item-dot .mud-timeline-item-dot-inner');
+    let navLinks = document.querySelectorAll('.mud-list-item');
 
     window.onscroll = () => {
         sections.forEach(sec => {
@@ -23,8 +23,8 @@ window.updateUrl = () => {
 
             if (top >= offset && top < offset + height) {
                 navLinks.forEach(link => {
-                    link.classList.remove('mud-timeline-dot-primary');
-                    document.querySelector(`.mud-timeline .mud-timeline-item.${id} .mud-timeline-item-divider .mud-timeline-item-dot .mud-timeline-item-dot-inner`).classList.add('mud-timeline-dot-primary');
+                    link.classList.remove('mud-selected-item', 'mud-primary-text', 'mud-primary-hover');
+                    document.querySelector(`#nav-${id}`).classList.add('mud-selected-item', 'mud-primary-text', 'mud-primary-hover');
                 })
             }
         })
@@ -33,5 +33,12 @@ window.updateUrl = () => {
 
 function scrollToSection(id) {
     var element = document.getElementById(id);
-    element.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+    var headerOffset = 45;
+    var elementPosition = element.getBoundingClientRect().top;
+    var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+  
+    window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+    });
 }

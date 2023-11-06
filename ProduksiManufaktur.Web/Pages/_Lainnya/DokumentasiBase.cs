@@ -8,6 +8,8 @@
         [Inject]
         protected IJSRuntime JSRuntime { get; set; } = null!;
 
+        protected object? sectionId;
+
         protected override void OnInitialized()
         {
             Layout.BreadcrumbItems = new()
@@ -21,22 +23,13 @@
         {
             if (firstRender)
             {
-                //await JSRuntime.InvokeVoidAsync("window.addEventListener", "scroll", DotNetObjectReference.Create(this).Value.InvokeVoidAsync("updateUrl"));
                 await JSRuntime.InvokeVoidAsync("updateUrl");
             }
         }
 
-        protected async Task NavigateToSection(string sectionId)
+        protected async Task NavigateToSection()
         {
-            // Construct the URL of the current page with the section ID as the fragment
-            //var uri = To.ToAbsoluteUri(To.Uri);
-            //uri = new UriBuilder(uri) { Fragment = sectionId }.Uri;
-
-            // Use JSRuntime to execute JavaScript code that scrolls the page to the specified section
             await JSRuntime.InvokeAsync<object>("scrollToSection", sectionId);
-
-            // Navigate to the updated URL
-            //To.NavigateTo(uri.ToString());
         }
     }
 }

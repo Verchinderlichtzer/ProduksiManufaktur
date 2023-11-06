@@ -47,7 +47,7 @@ else
                 <MudText Typo="Typo.h6">Barang yang dikembalikan</MudText>
             </ToolBarContent>
             <Columns>
-                <Column T="ReturPenjualanDetail" Field="BarangSatuan" Title="Nama Barang">
+                <Column T="ReturPenjualanDetail" Field="BarangSatuan" Title="Nama Barang" SortBy="@(e => e.BarangSatuan!.Barang!.Nama)">
                     <CellTemplate>
                         @context.Item.BarangSatuan!.Barang!.Nama
                     </CellTemplate>

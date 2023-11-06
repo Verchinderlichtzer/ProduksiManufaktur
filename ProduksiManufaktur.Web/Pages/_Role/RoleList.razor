@@ -35,8 +35,11 @@ else
                     <Column T="Role" HeaderStyle="width:1px" Sortable="false">
                         <CellTemplate>
                             <MudStack Row="true" Spacing="1">
-                                <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" OnClick="@(async e => await Form(context.Item))" />
-                                <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(async e => await Hapus(context.Item))" />
+                                @if (context.Item.NormalizedName != "ADMIN")
+                                {
+                                    <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" OnClick="@(async e => await Form(context.Item))" />
+                                    <MudIconButton Variant="Variant.Filled" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(async e => await Hapus(context.Item))" />
+                                }
                             </MudStack>
                         </CellTemplate>
                     </Column>

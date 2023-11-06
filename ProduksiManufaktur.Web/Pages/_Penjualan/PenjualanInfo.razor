@@ -109,7 +109,7 @@ else
                 <MudText Typo="Typo.h6">Barang yang dijual</MudText>
             </ToolBarContent>
             <Columns>
-                <Column T="PenjualanDetail" Field="BarangSatuan" Title="Nama Barang">
+                <Column T="PenjualanDetail" Field="BarangSatuan" Title="Nama Barang" SortBy="@(e => e.BarangSatuan!.Barang!.Nama)">
                     <CellTemplate>
                         @context.Item.BarangSatuan!.Barang!.Nama
                     </CellTemplate>

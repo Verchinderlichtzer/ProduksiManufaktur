@@ -37,7 +37,7 @@ else
                     @context.Item.Tanggal.ToString("dd/MM/yyyy HH.mm")
                 </CellTemplate>
             </Column>
-            <Column T="Pembelian" Field="Supplier" Title="Nama Supplier">
+            <Column T="Pembelian" Field="Supplier" Title="Nama Supplier" SortBy="@(e => e.Supplier!.Nama)">
                 <CellTemplate>
                     @context.Item.Supplier!.Nama
                 </CellTemplate>

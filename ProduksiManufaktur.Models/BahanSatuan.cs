@@ -4,7 +4,6 @@
     {
         /// <summary>Auto Generate</summary>
         public int Id { get; set; }
-
         public string BahanId { get; set; } = null!;
 
         public string Nama { get; set; } = string.Empty;

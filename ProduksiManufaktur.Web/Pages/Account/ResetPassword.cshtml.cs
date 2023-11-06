@@ -9,6 +9,7 @@ namespace ProduksiManufaktur.Web.Pages.Account
     public class ResetPasswordModel : PageModel
     {
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
         [BindProperty]
         public InputModel Input { get; set; } = new();
@@ -16,9 +17,10 @@ namespace ProduksiManufaktur.Web.Pages.Account
         [TempData]
         public string ErrorMessage { get; set; } = string.Empty;
 
-        public ResetPasswordModel(UserManager<User> userManager)
+        public ResetPasswordModel(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public class InputModel
@@ -70,6 +72,8 @@ namespace ProduksiManufaktur.Web.Pages.Account
                         {
                             await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
                         }
+                        await _signInManager.SignOutAsync();
+                        Response.Cookies.Delete("api_token");
 
                         TempData["Title"] = "Password Berhasil Direset";
                         TempData["Pesan"] = $"""Silahkan <a href="{Url.Page("login", Request.Scheme)}">login</a> dengan password baru anda""";
